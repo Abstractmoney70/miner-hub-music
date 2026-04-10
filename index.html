@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Miner Day Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar__brand">
+        <div class="brand__icon">⛏</div>
+        <div>
+          <div class="brand__name">Miner Day Hub</div>
+          <div class="brand__sub">Noteblock Archive</div>
+        </div>
+      </div>
+
+      <nav class="sidebar__nav">
+        <a class="nav-item is-active" href="#/" data-route="home">
+          <span class="nav-item__icon">◈</span> Home
+        </a>
+        <a class="nav-item" href="#/albums" data-route="albums">
+          <span class="nav-item__icon">◈</span> Albums
+        </a>
+        <a class="nav-item" href="#/search" data-route="search">
+          <span class="nav-item__icon">◈</span> Search
+        </a>
+      </nav>
+
+      <div class="sidebar__section-label">Your Library</div>
+      <div class="sidebar__library" id="sidebarLibrary">
+        <div class="sidebar__empty">Loading...</div>
+      </div>
+
+      <div class="sidebar__footer">
+        <div class="sidebar__manifest">
+          <span class="manifest__label">MANIFEST</span>
+          <code id="manifestPath">releases.json</code>
+        </div>
+        <button class="btn-ghost" id="reloadBtn">↺ Reload</button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <div class="topbar__nav">
+          <button class="topbar__arrow" id="backBtn" disabled>‹</button>
+          <button class="topbar__arrow" id="fwdBtn">›</button>
+        </div>
+
+        <div class="topbar__search" id="searchShell">
+          <span class="search__icon">⌕</span>
+          <input
+            class="search__input"
+            id="searchInput"
+            type="search"
+            placeholder="Search albums, tracks..."
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="topbar__right">
+          <div class="topbar__avatar">M</div>
+        </div>
+      </header>
+
+      <!-- PAGE -->
+      <div class="page" id="page" aria-live="polite"></div>
+
+    </div>
+
+    <!-- QUEUE PANEL -->
+    <aside class="queue" id="queuePanel">
+      <div class="queue__header">
+        <span class="queue__title">Queue</span>
+        <button class="btn-ghost btn--sm" id="clearQueueBtn">Clear</button>
+      </div>
+      <div class="queue__now" id="queueNow"></div>
+      <div class="queue__label">UP NEXT</div>
+      <div class="queue__list" id="queueList"></div>
+    </aside>
+
+  </div>
+
+  <!-- NOW PLAYING BAR -->
+  <footer class="bar">
+    <div class="bar__track">
+      <div class="bar__cover-wrap">
+        <img class="bar__cover" id="barCover" src="" alt="" hidden />
+        <div class="bar__cover-placeholder" id="barCoverPlaceholder">⛏</div>
+      </div>
+      <div class="bar__meta">
+        <div class="bar__title" id="barTitle">Nothing playing</div>
+        <div class="bar__artist" id="barArtist">—</div>
+      </div>
+      <button class="bar__like" id="barLike" title="Download track">⬇</button>
+    </div>
+
+    <div class="bar__center">
+      <div class="bar__controls">
+        <button class="bar__ctrl bar__ctrl--sm" id="shuffleBtn" title="Shuffle">⇄</button>
+        <button class="bar__ctrl bar__ctrl--sm" id="prevBtn">⏮</button>
+        <button class="bar__ctrl bar__ctrl--play" id="playBtn">▶</button>
+        <button class="bar__ctrl bar__ctrl--sm" id="nextBtn">⏭</button>
+        <button class="bar__ctrl bar__ctrl--sm" id="repeatBtn" title="Repeat">↻</button>
+      </div>
+      <div class="bar__progress">
+        <span class="bar__time" id="timeNow">0:00</span>
+        <div class="bar__track-rail" id="progressRail">
+          <div class="bar__track-fill" id="progressFill"></div>
+          <div class="bar__track-thumb" id="progressThumb"></div>
+        </div>
+        <span class="bar__time" id="timeDur">0:00</span>
+      </div>
+    </div>
+
+    <div class="bar__right">
+      <button class="bar__ctrl bar__ctrl--sm" id="queueToggleBtn" title="Queue">☰</button>
+      <span class="bar__vol-icon">♪</span>
+      <div class="bar__vol-rail" id="volRail">
+        <div class="bar__vol-fill" id="volFill"></div>
+        <div class="bar__vol-thumb" id="volThumb"></div>
+      </div>
+    </div>
+  </footer>
+
+  <audio id="audio" preload="metadata"></audio>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

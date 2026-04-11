@@ -4,77 +4,267 @@
     {
       "slug": "american-idiot",
       "name": "American Idiot",
-      "artist": "Green Day",
+      "artist": "Minecraft Day",
       "year": 2004,
-      "cover": "https://upload.wikimedia.org/wikipedia/en/2/20/Green_Day_-_American_Idiot_album_cover.png",
-      "color": "#8B0000",
+      "type": "Album",
+      "cover": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_AmericanIdiot/American.Idiot.png",
+      "tag": "Album_AmericanIdiot",
+      "access": "public",
+      "description": "Don't Wanna Be An American Idiot (Main - Standard)",
       "tracks": [
-        { "title": "American Idiot", "file": "", "duration": "2:54", "plays": 1371471951, "explicit": true },
-        { "title": "Jesus of Suburbia", "file": "", "duration": "9:08", "plays": 892341122, "explicit": true },
-        { "title": "Holiday", "file": "", "duration": "3:52", "plays": 571347670, "explicit": false },
-        { "title": "Boulevard of Broken Dreams", "file": "", "duration": "4:20", "plays": 1204839201, "explicit": false },
-        { "title": "Are We the Waiting", "file": "", "duration": "2:42", "plays": 312847210, "explicit": false },
-        { "title": "St. Jimmy", "file": "", "duration": "2:55", "plays": 428293041, "explicit": true },
-        { "title": "Give Me Novacaine", "file": "", "duration": "3:25", "plays": 287493012, "explicit": false },
-        { "title": "She's a Rebel", "file": "", "duration": "2:00", "plays": 341029384, "explicit": false },
-        { "title": "Extraordinary Girl", "file": "", "duration": "3:33", "plays": 267384920, "explicit": false },
-        { "title": "Letterbomb", "file": "", "duration": "4:06", "plays": 298473812, "explicit": true },
-        { "title": "Wake Me Up When September Ends", "file": "", "duration": "4:45", "plays": 1103847291, "explicit": false },
-        { "title": "Homecoming", "file": "", "duration": "9:18", "plays": 412938401, "explicit": true },
-        { "title": "Whatsername", "file": "", "duration": "4:14", "plays": 498273910, "explicit": false }
+        {
+          "title": "American Idiot",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_AmericanIdiot/American.Idiot.mp3",
+          "youtubeUrl": "https://youtu.be/kdNPvp1rkTA?si=q74szZe7yJdu3Nen",
+          "duration": "2:54",
+          "access": "public",
+          "plays": 1371471951,
+          "explicit": true
+        },
+        {
+          "title": "Jesus of Suburbia",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_AmericanIdiot/Jesus.of.Suburbia.mp3",
+          "youtubeUrl": "https://youtu.be/eHWJOoFbhaI?si=97hsPCdDBWk-ETnd",
+          "duration": "9:08",
+          "access": "public",
+          "plays": 892341122,
+          "explicit": true
+        },
+        {
+          "title": "Holiday",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_AmericanIdiot/Holiday.mp3",
+          "youtubeUrl": "https://youtu.be/JcNE-renaFo?si=J5VtJc_b5Meh0Ttd",
+          "duration": "3:52",
+          "access": "public",
+          "plays": 571347670,
+          "explicit": false
+        },
+        {
+          "title": "Boulevard of Broken Dreams",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_AmericanIdiot/Boulevard.of.Broken.Dreams.mp3",
+          "youtubeUrl": "https://youtu.be/yTRZaCDeu3w?si=YoWhojc1dP1kQiwN",
+          "duration": "4:20",
+          "access": "public",
+          "plays": 1204839201,
+          "explicit": false
+        },
+        {
+          "title": "Are We the Waiting",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_AmericanIdiot/Are.We.The.Waiting.mp3",
+          "youtubeUrl": "https://youtu.be/wuDyaapT4eY?si=hFMMBMIO_zsY38cv",
+          "duration": "2:42",
+          "access": "public",
+          "plays": 312847210,
+          "explicit": false
+        },
+        {
+          "title": "St. Jimmy",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_AmericanIdiot/St.Jimmy.mp3",
+          "youtubeUrl": "https://youtu.be/k3cXYMQjH80?si=ZmK3iUCDN44aH_ZP",
+          "duration": "2:55",
+          "access": "public",
+          "plays": 428293041,
+          "explicit": true
+        },
+        {
+          "title": "Give Me Novacaine",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_AmericanIdiot/Give.Me.Novacaine.mp3",
+          "youtubeUrl": "https://youtu.be/ZC_MtgIWY2U?si=EQa5ItOilXbV9FEX",
+          "duration": "3:25",
+          "access": "public",
+          "plays": 287493012,
+          "explicit": false
+        },
+        {
+          "title": "She's a Rebel",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_AmericanIdiot/She.s.a.Rebel.mp3",
+          "youtubeUrl": "https://youtu.be/OWWj8RVIvSU?si=zimEWvvv7Arf0Lkf",
+          "duration": "2:00",
+          "access": "public",
+          "plays": 341029384,
+          "explicit": false
+        },
+        {
+          "title": "Extraordinary Girl",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_AmericanIdiot/Extraordinary.Girl.mp3",
+          "youtubeUrl": "https://youtu.be/E0yYl3DwbyU?si=N3I3ZmmZgzpV_haz",
+          "duration": "3:33",
+          "access": "public",
+          "plays": 267384920,
+          "explicit": false
+        },
+        {
+          "title": "Letterbomb",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_AmericanIdiot/Letterbomb.mp3",
+          "youtubeUrl": "https://youtu.be/xpsXHfjCaFw?si=hTv9nUCnjpnT_U0b",
+          "duration": "4:06",
+          "access": "public",
+          "plays": 298473812,
+          "explicit": true
+        },
+        {
+          "title": "Wake Me Up When September Ends",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_AmericanIdiot/Wake.me.up.When.September.Ends.mp3",
+          "youtubeUrl": "https://youtu.be/x-NV8mHzVd4?si=HUCX57ShHKNmrddp",
+          "duration": "4:45",
+          "access": "public",
+          "plays": 1103847291,
+          "explicit": false
+        },
+        {
+          "title": "Homecoming",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_AmericanIdiot/Homecoming.mp3",
+          "youtubeUrl": "https://youtu.be/tdnZRvUGJUw?si=a7KG-OcRuTRnzOxo",
+          "duration": "9:18",
+          "access": "public",
+          "plays": 412938401,
+          "explicit": true
+        },
+        {
+          "title": "Whatsername",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_AmericanIdiot/Whatsername.mp3",
+          "youtubeUrl": "https://youtu.be/4YmwAS7-w9I?si=GZrHbCTuiKh2aXXF",
+          "duration": "4:14",
+          "access": "public",
+          "plays": 498273910,
+          "explicit": false
+        }
       ]
     },
     {
       "slug": "dookie",
       "name": "Dookie",
-      "artist": "Green Day",
+      "artist": "Minecraft Day",
       "year": 1994,
-      "cover": "https://upload.wikimedia.org/wikipedia/en/4/4b/Green_Day_-_Dookie_cover.jpg",
-      "color": "#4a7c2f",
+      "type": "Album",
+      "cover": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/Dookie.png",
+      "tag": "Album_Dookie",
+      "access": "early",
+      "code": "MINECRAFTDAYDOOKIAN1994",
+      "limit": 0,
+      "description": "I declare I don't care no more!",
       "tracks": [
-        { "title": "Burnout", "file": "", "duration": "2:07", "plays": 178298731, "explicit": true },
-        { "title": "Having a Blast", "file": "", "duration": "2:43", "plays": 87293810, "explicit": true },
-        { "title": "Chump", "file": "", "duration": "2:54", "plays": 92847210, "explicit": false },
-        { "title": "Longview", "file": "", "duration": "3:59", "plays": 584732918, "explicit": true },
-        { "title": "Welcome to Paradise", "file": "", "duration": "3:44", "plays": 492847391, "explicit": true },
-        { "title": "Pulling Teeth", "file": "", "duration": "2:31", "plays": 112938472, "explicit": true },
-        { "title": "Basket Case", "file": "", "duration": "3:01", "plays": 1029384721, "explicit": true },
-        { "title": "She", "file": "", "duration": "2:14", "plays": 203948271, "explicit": false },
-        { "title": "Sassafras Roots", "file": "", "duration": "2:37", "plays": 98273810, "explicit": true },
-        { "title": "When I Come Around", "file": "", "duration": "2:58", "plays": 712938472, "explicit": false },
-        { "title": "Coming Clean", "file": "", "duration": "1:34", "plays": 87293841, "explicit": true },
-        { "title": "Emenius Sleepus", "file": "", "duration": "1:44", "plays": 63847291, "explicit": false },
-        { "title": "In the End", "file": "", "duration": "1:46", "plays": 72938401, "explicit": false },
-        { "title": "F.O.D.", "file": "", "duration": "2:50", "plays": 98273019, "explicit": true },
-        { "title": "All by Myself", "file": "", "duration": "1:40", "plays": 52938471, "explicit": false }
-      ]
-    },
-    {
-      "slug": "nimrod",
-      "name": "Nimrod",
-      "artist": "Green Day",
-      "year": 1997,
-      "cover": "https://upload.wikimedia.org/wikipedia/en/6/sixty/GreenDayNimrodcover.jpg",
-      "color": "#1a3a5c",
-      "tracks": [
-        { "title": "Nice Guys Finish Last", "file": "", "duration": "2:44", "plays": 312948271, "explicit": true },
-        { "title": "Hitchin' a Ride", "file": "", "duration": "2:51", "plays": 298473921, "explicit": false },
-        { "title": "The Grouch", "file": "", "duration": "2:12", "plays": 198273891, "explicit": true },
-        { "title": "Redundant", "file": "", "duration": "3:17", "plays": 412938271, "explicit": false },
-        { "title": "Scattered", "file": "", "duration": "2:45", "plays": 187293841, "explicit": false },
-        { "title": "All the Time", "file": "", "duration": "2:09", "plays": 142938471, "explicit": true },
-        { "title": "Worry Rock", "file": "", "duration": "2:27", "plays": 163847291, "explicit": false },
-        { "title": "Platypus (I Hate You)", "file": "", "duration": "2:22", "plays": 298473018, "explicit": true },
-        { "title": "Uptight", "file": "", "duration": "2:13", "plays": 132847291, "explicit": false },
-        { "title": "Last Ride In", "file": "", "duration": "2:40", "plays": 98273841, "explicit": false },
-        { "title": "Jinx", "file": "", "duration": "2:14", "plays": 112938471, "explicit": false },
-        { "title": "Haushinka", "file": "", "duration": "3:04", "plays": 98273019, "explicit": false },
-        { "title": "Walking Alone", "file": "", "duration": "2:28", "plays": 143847291, "explicit": false },
-        { "title": "Reject", "file": "", "duration": "2:05", "plays": 187293018, "explicit": true },
-        { "title": "Take Back", "file": "", "duration": "1:07", "plays": 87293841, "explicit": true },
-        { "title": "King for a Day", "file": "", "duration": "4:38", "plays": 143938271, "explicit": false },
-        { "title": "Good Riddance (Time of Your Life)", "file": "", "duration": "2:34", "plays": 892847391, "explicit": false },
-        { "title": "Prosthetic Head", "file": "", "duration": "3:10", "plays": 98273841, "explicit": true }
+        {
+          "title": "Burnout",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/Burnout.mp3",
+          "youtubeUrl": "https://youtu.be/8MJ0bj7kei0?si=g6EQDmWxDPYeawQi",
+          "duration": "2:07",
+          "access": "public",
+          "plays": 178298731,
+          "explicit": true
+        },
+        {
+          "title": "Having a Blast",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/Having.a.Blast.mp3",
+          "duration": "2:43",
+          "access": "early",
+          "plays": 87293810,
+          "explicit": true
+        },
+        {
+          "title": "Chump",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/Chump.mp3",
+          "duration": "2:54",
+          "access": "early",
+          "plays": 92847210,
+          "explicit": false
+        },
+        {
+          "title": "Longview",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/Longview.mp3",
+          "duration": "3:59",
+          "access": "early",
+          "plays": 584732918,
+          "explicit": true
+        },
+        {
+          "title": "Welcome to Paradise",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/Welcome.to.Paradise.mp3",
+          "duration": "3:44",
+          "access": "early",
+          "plays": 492847391,
+          "explicit": true
+        },
+        {
+          "title": "Pulling Teeth",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/Pulling.Teeth.mp3",
+          "duration": "2:31",
+          "access": "early",
+          "plays": 112938472,
+          "explicit": true
+        },
+        {
+          "title": "Basket Case",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/Basket.Case.mp3",
+          "duration": "3:01",
+          "access": "early",
+          "plays": 1029384721,
+          "explicit": true
+        },
+        {
+          "title": "She",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/She.mp3",
+          "duration": "2:14",
+          "access": "early",
+          "plays": 203948271,
+          "explicit": false
+        },
+        {
+          "title": "Sassafras Roots",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/Sassafras.Roots.mp3",
+          "duration": "2:37",
+          "access": "early",
+          "plays": 98273810,
+          "explicit": true
+        },
+        {
+          "title": "When I Come Around",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/When.I.Come.Around.mp3",
+          "duration": "2:58",
+          "access": "early",
+          "plays": 712938472,
+          "explicit": false
+        },
+        {
+          "title": "Coming Clean",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/Coming.Clean.mp3",
+          "duration": "1:34",
+          "access": "early",
+          "plays": 87293841,
+          "explicit": true
+        },
+        {
+          "title": "Emenius Sleepus",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/Emenius.Sleepus.mp3",
+          "duration": "1:44",
+          "access": "early",
+          "plays": 63847291,
+          "explicit": false
+        },
+        {
+          "title": "In the End",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/In.The.End.mp3",
+          "duration": "1:46",
+          "access": "early",
+          "plays": 72938401,
+          "explicit": false
+        },
+        {
+          "title": "F.O.D.",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/F.O.D.mp3",
+          "duration": "2:50",
+          "access": "early",
+          "plays": 98273019,
+          "explicit": true
+        },
+        {
+          "title": "All by Myself",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/All.by.Myself.mp3",
+          "duration": "1:40",
+          "access": "early",
+          "plays": 52938471,
+          "explicit": false
+        }
       ]
     }
   ]

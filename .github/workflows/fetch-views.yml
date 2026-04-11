@@ -1,0 +1,43 @@
+name: Fetch YouTube Views
+
+on:
+  # Run once a day at 06:00 UTC
+  schedule:
+    - cron: "0 6 * * *"
+
+  # Allow manual trigger from GitHub Actions tab
+  workflow_dispatch:
+
+jobs:
+  fetch-views:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write   # needed to commit daily_views.json back to the repo
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run fetch-views script
+        env:
+          YT_API_KEY: ${{ secrets.YT_API_KEY }}
+        run: node fetch-views.js
+
+      - name: Commit and push daily_views.json
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Only commit if daily_views.json actually changed
+          if git diff --quiet daily_views.json; then
+            echo "No changes to daily_views.json — skipping commit."
+          else
+            git add daily_views.json
+            git commit -m "chore: update daily_views.json [$(date -u '+%Y-%m-%d')]"
+            git push
+          fi

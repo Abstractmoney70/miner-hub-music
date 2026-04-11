@@ -1,0 +1,23 @@
+Must add:
+
+Nimrod to the github
+It in the releases.json using the editor
+A bug fix of the placeholder icon being located under the main album icon regardless of if the user is online or not; make them overlap, placeholder is shown and main album is hidden if offline and vice versa.
+Albums with the exact 1:1 same title/name are organized in a new feature;
+
+At the bottom of the album's page, there should a button called 'X more releases' which opens a pop up with the other version(s) of the album, X being a variable dependant on how many versions are there in the first place.
+
+At the top alongside the artist name in the album's page it should say how many tracks there are (if it doesn't say already) and also how long the album is, how? well:
+
+First fetch the tracks which should already be tbh
+Get how long they are for the specified album, individually adding them up
+Displaying that at the end, so just use a standard variable to change for whenever an album page is boot up
+
+Fix the youtube api integration since it doesn't work yet, it doesn't connect to check with youtube and see how many views it have, and I'm not sure if the 'local_plays.json' exists yet and how it would tbh, because when you listen to a song for a minute minimum then it  counts as a play so the cycle becomes:
+
+1. Open album
+2. App immediately fetches from youtube and caches it onto your computer for the entire day for the user natively
+3. That value we just obtained is now made the 'base' variable and upon this, another variable is made which is the users play count for the song, which exists and is stored in the local_plays.json, everytime the user listens to a song and it increments after the value I said, and the json is overwritten with a new value for that specific key:value pair.
+
+Make the editor have an import so that shit can be saved and reused immediately
+

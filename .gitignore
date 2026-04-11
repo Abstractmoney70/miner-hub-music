@@ -1,0 +1,21 @@
+# IMPORTANT: config.json contains your GitHub PAT and YouTube API key — NEVER commit this
+config.json
+
+# Dependencies
+node_modules/
+
+# Electron build output
+dist/
+out/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# daily_views.json is written by the GitHub Action and SHOULD be committed.
+# daily_views_client.json is a local offline cache — do NOT commit it.
+daily_views_client.json

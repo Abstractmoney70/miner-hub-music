@@ -1,0 +1,24 @@
+{
+  "name": "miner-day-hub",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+  "start": "electron ."
+},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Abstractmoney70/miner-hub-music.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Abstractmoney70/miner-hub-music/issues"
+  },
+  "homepage": "https://github.com/Abstractmoney70/miner-hub-music#readme",
+  "devDependencies": {
+    "electron": "^41.2.0"
+  }
+}

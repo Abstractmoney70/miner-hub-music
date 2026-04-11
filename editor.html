@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Miner Day Hub — Release Editor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet"/>
+<style>
+/* ── TOKENS ──────────────────────────────────────────── */
+:root {
+  --bg:        #080808;
+  --s1:        #101010;
+  --s2:        #161616;
+  --s3:        #1e1e1e;
+  --s4:        #282828;
+  --border:    rgba(255,255,255,0.07);
+  --border2:   rgba(255,255,255,0.13);
+  --green:     #1db954;
+  --green-d:   rgba(29,185,84,0.12);
+  --green-g:   rgba(29,185,84,0.35);
+  --red:       #e84040;
+  --red-d:     rgba(232,64,64,0.12);
+  --amber:     #f59e0b;
+  --amber-d:   rgba(245,158,11,0.12);
+  --text:      #ffffff;
+  --t2:        #aaaaaa;
+  --t3:        #555555;
+  --mono:      'DM Mono', monospace;
+  --sans:      'DM Sans', sans-serif;
+  --display:   'Bebas Neue', sans-serif;
+  --r:         8px;
+  --r2:        14px;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#2a2a2a;border-radius:3px}
+button,input,select,textarea{font:inherit;color:inherit}
+button{background:none;border:none;cursor:pointer}
+a{color:inherit;text-decoration:none}
+
+/* ── LAYOUT ──────────────────────────────────────────── */
+.shell {
+  display: grid;
+  grid-template-columns: 280px 1fr 320px;
+  grid-template-rows: 56px 1fr;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* All three panels must fill remaining height and scroll internally */
+.sidebar,
+.editor,
+.rpanel {
+  min-height: 0;
+  max-height: calc(100vh - 56px);
+  overflow-y: auto;
+}
+
+.sidebar {
+  overflow-y: auto;
+}
+
+.editor {
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.rpanel {
+  overflow-y: auto;
+}
+
+/* ── TOPBAR ──────────────────────────────────────────── */
+.topbar {
+  grid-column: 1/-1;
+  background: var(--s1);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  gap: 16px;
+}
+
+.topbar__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar__icon {
+  font-size: 1.4rem;
+  filter: drop-shadow(0 0 6px var(--green-g));
+}
+
+.topbar__name {
+  font-family: var(--display);
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
+}
+
+.topbar__badge {
+  background: var(--green-d);
+  border: 1px solid var(--green-g);
+  color: var(--green);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.topbar__actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.topbar__status {
+  font-size: 0.78rem;
+  color: var(--t3);
+  font-family: var(--mono);
+}
+
+/* ── SIDEBAR ──────────────────────────────────────────── */
+.sidebar {
+  background: var(--s1);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  height: 100%;
+}
+
+.sidebar__head {
+  padding: 16px 16px 10px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar__label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--t3);
+}
+
+.sidebar__list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.release-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 10px;
+  border-radius: var(--r);
+  cursor: pointer;
+  transition: background 0.14s;
+  position: relative;
+}
+.release-chip:hover { background: rgba(255,255,255,0.05); }
+.release-chip.is-active { background: var(--s3); }
+.release-chip.is-active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 20%; bottom: 20%;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--green);
+}
+
+.chip__art {
+  width: 40px; height: 40px;
+  border-radius: 5px;
+  object-fit: cover;
+  background: var(--s3);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: var(--t3);
+}
+.chip__art img { width: 100%; height: 100%; object-fit: cover; border-radius: 5px; display: block; }
+
+.chip__info { flex: 1; min-width: 0; }
+.chip__name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.chip__meta {
+  font-size: 0.72rem;
+  color: var(--t3);
+  margin-top: 2px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.type-badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.type-badge--album    { background: var(--green-d); color: var(--green); }
+.type-badge--ep       { background: var(--amber-d); color: var(--amber); }
+.type-badge--compilation { background: rgba(120,80,200,0.15); color: #a78bfa; }
+.type-badge--single   { background: rgba(56,189,248,0.12); color: #38bdf8; }
+
+.access-badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px 5px;
+  border-radius: 4px;
+}
+.access-badge--public { background: var(--green-d); color: var(--green); }
+.access-badge--early  { background: var(--amber-d); color: var(--amber); }
+.access-badge--locked { background: var(--red-d); color: var(--red); }
+
+.chip__del {
+  opacity: 0;
+  color: var(--t3);
+  font-size: 1rem;
+  padding: 4px;
+  border-radius: 4px;
+  transition: opacity 0.14s, color 0.14s, background 0.14s;
+}
+.release-chip:hover .chip__del { opacity: 1; }
+.chip__del:hover { color: var(--red); background: var(--red-d); }
+
+.sidebar__add {
+  padding: 12px;
+  border-top: 1px solid var(--border);
+}
+
+/* ── MAIN EDITOR ──────────────────────────────────────── */
+.editor {
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 0;
+}
+
+.editor__empty {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  color: var(--t3);
+  text-align: center;
+  gap: 12px;
+}
+.editor__empty-icon { font-size: 3rem; }
+.editor__empty-title { font-family: var(--display); font-size: 1.6rem; letter-spacing: 0.04em; }
+.editor__empty-sub { font-size: 0.85rem; }
+
+.card {
+  background: var(--s2);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  overflow: hidden;
+}
+
+.card__head {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.card__title {
+  font-family: var(--display);
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  color: var(--t2);
+  text-transform: uppercase;
+}
+
+.card__body { padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+
+/* Fields */
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field--row { flex-direction: row; align-items: center; gap: 12px; }
+.field--row .field__label { min-width: 90px; flex-shrink: 0; }
+
+.field__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--t3);
+}
+
+.field__input, .field__select, .field__textarea {
+  background: var(--s3);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  padding: 9px 12px;
+  color: var(--text);
+  font-size: 0.88rem;
+  transition: border-color 0.14s;
+  width: 100%;
+}
+.field__input:focus, .field__select:focus, .field__textarea:focus {
+  outline: none;
+  border-color: var(--green);
+}
+.field__select { cursor: pointer; }
+.field__textarea { resize: vertical; min-height: 70px; font-family: var(--mono); font-size: 0.8rem; }
+
+.field__mono {
+  font-family: var(--mono);
+  font-size: 0.82rem;
+}
+
+.fields-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.fields-grid--3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+
+/* Cover preview */
+.cover-row {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+.cover-preview {
+  width: 80px; height: 80px;
+  border-radius: var(--r);
+  background: var(--s3);
+  border: 1px solid var(--border2);
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  color: var(--t3);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.cover-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Track table */
+.track-table { width: 100%; border-collapse: collapse; }
+
+.track-table th {
+  text-align: left;
+  padding: 8px 10px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--t3);
+  border-bottom: 1px solid var(--border);
+}
+
+.track-table td {
+  padding: 6px 6px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.track-table tr:last-child td { border-bottom: none; }
+.track-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+.track-table input, .track-table select {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  padding: 5px 7px;
+  font-size: 0.82rem;
+  width: 100%;
+  transition: border-color 0.14s, background 0.14s;
+}
+.track-table input:focus, .track-table select:focus {
+  outline: none;
+  border-color: var(--green);
+  background: var(--s3);
+}
+.track-table input::placeholder { color: var(--t3); }
+
+.track-num {
+  width: 28px;
+  text-align: right;
+  color: var(--t3);
+  font-size: 0.8rem;
+  font-family: var(--mono);
+  padding-right: 10px !important;
+}
+
+.track-del {
+  color: var(--t3);
+  font-size: 0.9rem;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: color 0.12s, background 0.12s;
+  width: 28px;
+  text-align: center;
+}
+.track-del:hover { color: var(--red); background: var(--red-d); }
+
+.track-drag {
+  color: var(--t3);
+  cursor: grab;
+  font-size: 0.85rem;
+  padding: 4px 6px;
+  user-select: none;
+}
+.track-drag:active { cursor: grabbing; }
+
+.track-access select { font-size: 0.72rem; }
+
+/* Access dots */
+.dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+.dot--green { background: var(--green); box-shadow: 0 0 5px var(--green-g); }
+.dot--amber { background: var(--amber); }
+.dot--red   { background: var(--red); }
+
+/* Code config */
+.code-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.limit-input {
+  width: 70px;
+  text-align: center;
+}
+
+/* ── RIGHT PANEL ──────────────────────────────────────── */
+.rpanel {
+  background: var(--s1);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.rpanel__head {
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.rpanel__title {
+  font-family: var(--display);
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  color: var(--t2);
+  text-transform: uppercase;
+}
+
+.rpanel__body {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.json-block {
+  background: var(--s2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 12px;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: #8aba7e;
+  white-space: pre;
+  overflow-x: auto;
+  line-height: 1.6;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.rpanel__copy {
+  margin-top: 4px;
+}
+
+.rpanel__export {
+  padding: 12px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* ── BUTTONS ──────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  transition: transform 0.1s, opacity 0.15s, background 0.15s, box-shadow 0.15s;
+  white-space: nowrap;
+}
+.btn:hover { transform: scale(1.02); }
+.btn:active { transform: scale(0.98); }
+
+.btn--green { background: var(--green); color: #000; }
+.btn--green:hover { background: #1ed760; box-shadow: 0 0 18px var(--green-g); }
+
+.btn--ghost { background: transparent; border: 1px solid var(--border2); color: var(--t2); }
+.btn--ghost:hover { border-color: var(--text); color: var(--text); }
+
+.btn--red { background: var(--red-d); border: 1px solid rgba(232,64,64,0.3); color: var(--red); }
+.btn--red:hover { background: rgba(232,64,64,0.2); }
+
+.btn--sm { padding: 5px 12px; font-size: 0.74rem; }
+.btn--block { width: 100%; justify-content: center; border-radius: var(--r); }
+
+/* ── TOGGLE ───────────────────────────────────────────── */
+.toggle-wrap { display: flex; align-items: center; gap: 10px; }
+.toggle {
+  position: relative;
+  width: 36px; height: 20px;
+  flex-shrink: 0;
+}
+.toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+.toggle__track {
+  position: absolute;
+  inset: 0;
+  background: var(--s4);
+  border-radius: 999px;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+.toggle input:checked ~ .toggle__track { background: var(--green); }
+.toggle__thumb {
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 14px; height: 14px;
+  border-radius: 999px;
+  background: white;
+  transition: transform 0.2s;
+  pointer-events: none;
+}
+.toggle input:checked ~ .toggle__track .toggle__thumb { transform: translateX(16px); }
+
+/* ── TOAST ────────────────────────────────────────────── */
+.toast-wrap {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.toast {
+  background: var(--s3);
+  border: 1px solid var(--border2);
+  border-radius: var(--r);
+  padding: 10px 16px;
+  font-size: 0.82rem;
+  color: var(--text);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  animation: slideIn 0.2s ease forwards;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.toast--green { border-color: var(--green-g); }
+.toast--red   { border-color: rgba(232,64,64,0.4); }
+
+@keyframes slideIn {
+  from { transform: translateX(20px); opacity: 0; }
+  to   { transform: translateX(0);   opacity: 1; }
+}
+
+/* ── MODAL ────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: grid;
+  place-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.15s ease;
+}
+.modal-overlay.hidden { display: none; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal {
+  background: var(--s2);
+  border: 1px solid var(--border2);
+  border-radius: var(--r2);
+  padding: 28px;
+  width: 480px;
+  max-width: 95vw;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  animation: popIn 0.18s ease;
+}
+
+@keyframes popIn {
+  from { transform: scale(0.95); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+.modal__title {
+  font-family: var(--display);
+  font-size: 1.4rem;
+  letter-spacing: 0.04em;
+}
+
+.modal__actions { display: flex; gap: 8px; justify-content: flex-end; }
+
+/* ── DRAG OVER ────────────────────────────────────────── */
+.track-row--drag-over td { background: var(--green-d) !important; }
+
+/* ── MISC ─────────────────────────────────────────────── */
+.sep { height: 1px; background: var(--border); margin: 4px 0; }
+.muted { color: var(--t3); font-size: 0.78rem; }
+.green { color: var(--green); }
+.amber { color: var(--amber); }
+.red   { color: var(--red); }
+.tag   { font-family: var(--mono); font-size: 0.75rem; background: var(--s3); border-radius: 4px; padding: 2px 6px; color: var(--t2); }
+
+.section-hint {
+  font-size: 0.75rem;
+  color: var(--t3);
+  font-style: italic;
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar__brand">
+      <span class="topbar__icon">⛏</span>
+      <span class="topbar__name">Miner Day Hub</span>
+      <span class="topbar__badge">Release Editor</span>
+    </div>
+    <div class="topbar__actions">
+      <span class="topbar__status" id="statusText">No file loaded</span>
+      <button class="btn btn--ghost btn--sm" id="loadFileBtn">📂 Load JSON</button>
+      <button class="btn btn--ghost btn--sm" id="addReleaseBtn">＋ Add Release</button>
+      <button class="btn btn--green btn--sm" id="exportBtn">⬇ Export JSON</button>
+    </div>
+    <input type="file" id="fileInput" accept=".json" style="display:none"/>
+  </header>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar__head">
+      <span class="sidebar__label">Releases <span id="releaseCount" class="tag">0</span></span>
+      <button class="btn btn--ghost btn--sm" id="sidebarAddBtn">＋</button>
+    </div>
+    <div class="sidebar__list" id="sidebarList">
+      <div style="padding:20px 12px;color:var(--t3);font-size:0.82rem;text-align:center">
+        Load a releases.json<br>or add a new release
+      </div>
+    </div>
+    <div class="sidebar__add">
+      <button class="btn btn--ghost btn--sm btn--block" id="sidebarAddBtn2">＋ New Release</button>
+    </div>
+  </aside>
+
+  <!-- MAIN EDITOR -->
+  <main class="editor" id="editor">
+    <div class="editor__empty">
+      <div class="editor__empty-icon">⛏</div>
+      <div class="editor__empty-title">No Release Selected</div>
+      <div class="editor__empty-sub">Load a releases.json or create a new release to get started.</div>
+    </div>
+  </main>
+
+  <!-- RIGHT PANEL -->
+  <aside class="rpanel">
+    <div class="rpanel__head">
+      <div class="rpanel__title">JSON Preview</div>
+    </div>
+    <div class="rpanel__body">
+      <div class="json-block" id="jsonPreview">// Select a release to preview</div>
+      <button class="btn btn--ghost btn--sm btn--block rpanel__copy" id="copyJsonBtn">⧉ Copy selected</button>
+    </div>
+    <div class="rpanel__export">
+      <div class="muted" style="margin-bottom:4px">Full manifest</div>
+      <button class="btn btn--ghost btn--sm btn--block" id="copyAllBtn">⧉ Copy all releases.json</button>
+      <button class="btn btn--green btn--sm btn--block" id="exportBtn2">⬇ Download releases.json</button>
+    </div>
+  </aside>
+
+</div>
+
+<!-- ADD RELEASE MODAL -->
+<div class="modal-overlay hidden" id="addModal">
+  <div class="modal">
+    <div class="modal__title">New Release</div>
+
+    <div class="fields-grid">
+      <div class="field">
+        <label class="field__label">Name</label>
+        <input class="field__input" id="m_name" placeholder="American Idiot" />
+      </div>
+      <div class="field">
+        <label class="field__label">Artist</label>
+        <input class="field__input" id="m_artist" value="Minecraft Day" />
+      </div>
+      <div class="field">
+        <label class="field__label">Year</label>
+        <input class="field__input" id="m_year" type="number" placeholder="2004" />
+      </div>
+      <div class="field">
+        <label class="field__label">Type</label>
+        <select class="field__select" id="m_type">
+          <option value="Album">Album</option>
+          <option value="EP">EP</option>
+          <option value="Single">Single</option>
+          <option value="Compilation">Compilation</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field__label">GitHub Tag (from your Release)</label>
+      <input class="field__input field__mono" id="m_tag" placeholder="Album_AmericanIdiot" />
+      <span class="muted">Must match exactly what's on GitHub Releases</span>
+    </div>
+
+    <div class="field">
+      <label class="field__label">Access Level</label>
+      <select class="field__select" id="m_access">
+        <option value="public">Public — everyone can play</option>
+        <option value="early">Early Access — requires code</option>
+        <option value="locked">Locked — hidden from public</option>
+      </select>
+    </div>
+
+    <div class="modal__actions">
+      <button class="btn btn--ghost" id="modalCancelBtn">Cancel</button>
+      <button class="btn btn--green" id="modalCreateBtn">Create Release</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script>
+"use strict";
+
+// ── STATE ─────────────────────────────────────────────
+const GH_BASE = "https://github.com/Abstractmoney70/miner-hub-music/releases/download";
+
+let state = {
+  releases: [],
+  selectedIndex: -1,
+  dirty: false,
+};
+
+// ── UTILS ─────────────────────────────────────────────
+function esc(v) {
+  return String(v ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+function slug(name) {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+function ghUrl(tag, filename) {
+  return `${GH_BASE}/${encodeURIComponent(tag)}/${encodeURIComponent(filename)}`;
+}
+
+function getTrackYouTubeRef(track) {
+  return track.youtubeUrl || track.youtubeVideoId || "";
+}
+
+function setTrackYouTubeRef(track, value) {
+  const ref = String(value ?? "").trim();
+  if (!ref) {
+    delete track.youtubeUrl;
+    delete track.youtubeVideoId;
+    return;
+  }
+
+  if (/^https?:\/\//i.test(ref)) {
+    track.youtubeUrl = ref;
+    delete track.youtubeVideoId;
+    return;
+  }
+
+  track.youtubeVideoId = ref;
+  delete track.youtubeUrl;
+}
+
+function typeBadge(type) {
+  const map = { Album:"album", EP:"ep", Single:"single", Compilation:"compilation" };
+  const cls = map[type] ?? "album";
+  return `<span class="type-badge type-badge--${cls}">${esc(type)}</span>`;
+}
+
+function accessBadge(access) {
+  const map = { public:["public","●"], early:["early","◑"], locked:["locked","○"] };
+  const [cls, icon] = map[access] ?? ["public","●"];
+  return `<span class="access-badge access-badge--${cls}">${icon} ${access}</span>`;
+}
+
+// ── TOAST ─────────────────────────────────────────────
+function toast(msg, type = "green") {
+  const el = document.createElement("div");
+  el.className = `toast toast--${type}`;
+  el.innerHTML = `<span>${type === "green" ? "✓" : "✕"}</span> ${esc(msg)}`;
+  document.getElementById("toastWrap").appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+// ── SIDEBAR ───────────────────────────────────────────
+function renderSidebar() {
+  const list = document.getElementById("sidebarList");
+  document.getElementById("releaseCount").textContent = state.releases.length;
+
+  if (!state.releases.length) {
+    list.innerHTML = `<div style="padding:20px 12px;color:var(--t3);font-size:0.82rem;text-align:center">No releases yet.<br>Add one to get started.</div>`;
+    return;
+  }
+
+  list.innerHTML = state.releases.map((r, i) => `
+    <div class="release-chip ${i === state.selectedIndex ? "is-active" : ""}" data-idx="${i}">
+      <div class="chip__art">
+        ${r.cover ? `<img src="${esc(r.cover)}" alt="" onerror="this.style.display='none'">` : "⛏"}
+      </div>
+      <div class="chip__info">
+        <div class="chip__name">${esc(r.name)}</div>
+        <div class="chip__meta">
+          <span>${esc(r.year)}</span>
+          ${typeBadge(r.type)}
+          ${accessBadge(r.access)}
+        </div>
+      </div>
+      <button class="chip__del" data-del="${i}" title="Delete">✕</button>
+    </div>
+  `).join("");
+
+  list.querySelectorAll(".release-chip").forEach(chip => {
+    chip.addEventListener("click", e => {
+      if (e.target.closest("[data-del]")) return;
+      selectRelease(Number(chip.dataset.idx));
+    });
+  });
+
+  list.querySelectorAll("[data-del]").forEach(btn => {
+    btn.addEventListener("click", e => {
+      e.stopPropagation();
+      const i = Number(btn.dataset.del);
+      if (!confirm(`Delete "${state.releases[i].name}"?`)) return;
+      state.releases.splice(i, 1);
+      if (state.selectedIndex >= state.releases.length) state.selectedIndex = state.releases.length - 1;
+      renderSidebar();
+      renderEditor();
+      updateJsonPreview();
+    });
+  });
+}
+
+// ── EDITOR ────────────────────────────────────────────
+function selectRelease(i) {
+  state.selectedIndex = i;
+  renderSidebar();
+  renderEditor();
+  updateJsonPreview();
+}
+
+function renderEditor() {
+  const editor = document.getElementById("editor");
+  const r = state.releases[state.selectedIndex];
+
+  if (!r) {
+    editor.innerHTML = `
+      <div class="editor__empty">
+        <div class="editor__empty-icon">⛏</div>
+        <div class="editor__empty-title">No Release Selected</div>
+        <div class="editor__empty-sub">Pick one from the sidebar or create a new release.</div>
+      </div>`;
+    return;
+  }
+
+  editor.innerHTML = `
+
+    <!-- INFO CARD -->
+    <div class="card">
+      <div class="card__head">
+        <span class="card__title">Release Info</span>
+        <div style="display:flex;gap:8px">
+          ${typeBadge(r.type)}
+          ${accessBadge(r.access)}
+        </div>
+      </div>
+      <div class="card__body">
+
+        <div class="cover-row">
+          <div class="cover-preview" id="coverPreview">
+            ${r.cover ? `<img src="${esc(r.cover)}" alt="" onerror="this.style.display='none'">` : "⛏"}
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;flex:1">
+            <div class="field">
+              <label class="field__label">Cover URL</label>
+              <input class="field__input field__mono" id="f_cover" value="${esc(r.cover)}" placeholder="https://github.com/.../cover.png" />
+            </div>
+            <div class="muted">Tip: use your GitHub release URL for the cover image</div>
+          </div>
+        </div>
+
+        <div class="fields-grid">
+          <div class="field">
+            <label class="field__label">Name</label>
+            <input class="field__input" id="f_name" value="${esc(r.name)}" />
+          </div>
+          <div class="field">
+            <label class="field__label">Artist</label>
+            <input class="field__input" id="f_artist" value="${esc(r.artist)}" />
+          </div>
+          <div class="field">
+            <label class="field__label">Year</label>
+            <input class="field__input" id="f_year" type="number" value="${esc(r.year)}" />
+          </div>
+          <div class="field">
+            <label class="field__label">Type</label>
+            <select class="field__select" id="f_type">
+              ${["Album","EP","Single","Compilation"].map(t => `<option ${r.type===t?"selected":""}>${t}</option>`).join("")}
+            </select>
+          </div>
+        </div>
+
+        <div class="fields-grid">
+          <div class="field">
+            <label class="field__label">GitHub Tag</label>
+            <input class="field__input field__mono" id="f_tag" value="${esc(r.tag)}" placeholder="Album_AmericanIdiot" />
+          </div>
+          <div class="field">
+            <label class="field__label">Slug (auto)</label>
+            <input class="field__input field__mono" id="f_slug" value="${esc(r.slug)}" placeholder="american-idiot" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label">Access Level</label>
+          <select class="field__select" id="f_access">
+            <option value="public" ${r.access==="public"?"selected":""}>Public — everyone</option>
+            <option value="early" ${r.access==="early"?"selected":""}>Early Access — requires code</option>
+            <option value="locked" ${r.access==="locked"?"selected":""}>Locked — hidden</option>
+          </select>
+        </div>
+
+        <div class="field" id="codeField" style="${r.access!=="public"?"":"display:none"}">
+          <label class="field__label">Access Code + Redemption Limit</label>
+          <div class="code-row">
+            <input class="field__input field__mono" id="f_code" value="${esc(r.code??'')}" placeholder="MINECRAFTDAYDOOKIAN1994" />
+            <input class="field__input limit-input" id="f_limit" type="number" min="0" value="${r.limit??0}" title="Max redemptions (0 = unlimited)" />
+            <span class="muted" style="white-space:nowrap">max uses</span>
+          </div>
+          <span class="muted">0 = unlimited redemptions</span>
+        </div>
+
+        <div class="field">
+          <label class="field__label">Description / Notes</label>
+          <textarea class="field__textarea" id="f_desc" placeholder="Optional notes...">${esc(r.description??'')}</textarea>
+        </div>
+
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button class="btn btn--ghost btn--sm" id="autoUrlBtn">⚡ Auto-fill URLs from tag</button>
+          <button class="btn btn--green btn--sm" id="saveBtn">✓ Save changes</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- TRACKS CARD -->
+    <div class="card">
+      <div class="card__head">
+        <span class="card__title">Tracks <span class="tag">${r.tracks.length}</span></span>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn--ghost btn--sm" id="addTrackBtn">＋ Add track</button>
+          <button class="btn btn--ghost btn--sm" id="autoTracksBtn">⚡ Auto-number</button>
+        </div>
+      </div>
+      <div class="card__body" style="padding:0;overflow-x:auto;overflow-y:auto;max-height:400px;">
+        <table class="track-table" id="trackTable">
+          <thead>
+            <tr>
+              <th style="width:28px"></th>
+              <th style="width:24px">#</th>
+              <th>Title</th>
+              <th style="width:220px">File URL</th>
+              <th style="width:180px">YouTube URL / ID</th>
+              <th style="width:60px">Duration</th>
+              <th style="width:80px">Access</th>
+              <th style="width:90px">Fallback Plays</th>
+              <th style="width:28px">E</th>
+              <th style="width:28px"></th>
+            </tr>
+          </thead>
+          <tbody id="trackBody">
+            ${renderTrackRows(r.tracks)}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  `;
+
+  bindEditorEvents(r);
+}
+
+function renderTrackRows(tracks) {
+  return tracks.map((t, i) => `
+    <tr class="track-row" draggable="true" data-ti="${i}">
+      <td class="track-drag">⠿</td>
+      <td class="track-num">${i+1}</td>
+      <td><input value="${esc(t.title)}" placeholder="Track title" data-field="title" data-ti="${i}" /></td>
+      <td><input value="${esc(t.file??'')}" placeholder="https://github.com/..." class="field__mono" style="font-size:0.72rem" data-field="file" data-ti="${i}" /></td>
+      <td><input value="${esc(getTrackYouTubeRef(t))}" placeholder="YouTube URL or video ID" class="field__mono" style="font-size:0.72rem" data-field="youtubeRef" data-ti="${i}" /></td>
+      <td><input value="${esc(t.duration??'')}" placeholder="3:24" data-field="duration" data-ti="${i}" /></td>
+      <td class="track-access">
+        <select data-field="access" data-ti="${i}">
+          <option value="public" ${(t.access??'public')==='public'?'selected':''}>Public</option>
+          <option value="early" ${(t.access??'')==='early'?'selected':''}>Early</option>
+          <option value="locked" ${(t.access??'')==='locked'?'selected':''}>Locked</option>
+        </select>
+      </td>
+      <td><input value="${esc(t.plays??'')}" placeholder="Optional" type="number" data-field="plays" data-ti="${i}" style="width:90px"/></td>
+      <td style="text-align:center">
+        <input type="checkbox" ${t.explicit?'checked':''} data-field="explicit" data-ti="${i}" style="width:auto;cursor:pointer" />
+      </td>
+      <td><button class="track-del" data-del-ti="${i}">✕</button></td>
+    </tr>
+  `).join("");
+}
+
+function bindEditorEvents(r) {
+  // Field changes → live update
+  const fields = ["cover","name","artist","year","type","tag","slug","access","code","limit","desc"];
+  fields.forEach(f => {
+    const el = document.getElementById(`f_${f}`);
+    if (!el) return;
+    el.addEventListener("input", () => {
+      liveUpdateRelease(r);
+      if (f === "access") {
+        document.getElementById("codeField").style.display =
+          el.value !== "public" ? "" : "none";
+      }
+      if (f === "cover") {
+        const prev = document.getElementById("coverPreview");
+        prev.innerHTML = el.value
+          ? `<img src="${esc(el.value)}" alt="" onerror="this.style.display='none'">`
+          : "⛏";
+      }
+      if (f === "name" && !document.getElementById("f_slug").dataset.manual) {
+        document.getElementById("f_slug").value = slug(el.value);
+      }
+      updateJsonPreview();
+    });
+  });
+
+  document.getElementById("f_slug")?.addEventListener("input", e => {
+    e.target.dataset.manual = "1";
+  });
+
+  // Save
+  document.getElementById("saveBtn")?.addEventListener("click", () => {
+    liveUpdateRelease(r);
+    renderSidebar();
+    updateJsonPreview();
+    toast("Release saved!");
+  });
+
+  // Auto-fill URLs
+  document.getElementById("autoUrlBtn")?.addEventListener("click", () => {
+    const tag = document.getElementById("f_tag").value.trim();
+    if (!tag) { toast("Enter a GitHub tag first", "red"); return; }
+    r.tracks.forEach(t => {
+      if (!t.file && t.title) {
+        // Convert title to dot-separated filename
+        const filename = t.title.replace(/ /g, ".") + ".mp3";
+        t.file = ghUrl(tag, filename);
+      }
+    });
+    // Cover
+    if (!r.cover) {
+      const coverFile = r.name.replace(/ /g, ".") + ".png";
+      r.cover = ghUrl(tag, coverFile);
+      document.getElementById("f_cover").value = r.cover;
+    }
+    renderEditor();
+    updateJsonPreview();
+    toast("URLs auto-filled from tag!");
+  });
+
+  // Add track
+  document.getElementById("addTrackBtn")?.addEventListener("click", () => {
+    liveUpdateRelease(r);
+    r.tracks.push({
+      title: "",
+      file: "",
+      duration: "",
+      access: "public",
+      plays: 0,
+      explicit: false,
+      youtubeVideoId: "",
+      youtubeUrl: "",
+    });
+    document.getElementById("trackBody").innerHTML = renderTrackRows(r.tracks);
+    bindTrackEvents(r);
+    updateJsonPreview();
+  });
+
+  // Auto-number (no-op visual, numbers are positional)
+  document.getElementById("autoTracksBtn")?.addEventListener("click", () => {
+    toast("Tracks are already auto-numbered by position");
+  });
+
+  bindTrackEvents(r);
+}
+
+function bindTrackEvents(r) {
+  const tbody = document.getElementById("trackBody");
+  if (!tbody) return;
+
+  // Input changes
+  tbody.querySelectorAll("[data-field]").forEach(input => {
+    input.addEventListener("input", () => {
+      const ti = Number(input.dataset.ti);
+      const field = input.dataset.field;
+      if (field === "explicit") {
+        r.tracks[ti][field] = input.checked;
+      } else if (field === "youtubeRef") {
+        setTrackYouTubeRef(r.tracks[ti], input.value);
+      } else if (field === "plays") {
+        r.tracks[ti][field] = Number(input.value) || 0;
+      } else {
+        r.tracks[ti][field] = input.value;
+      }
+      updateJsonPreview();
+    });
+    input.addEventListener("change", () => {
+      const ti = Number(input.dataset.ti);
+      const field = input.dataset.field;
+      if (field === "explicit") {
+        r.tracks[ti][field] = input.checked;
+      } else if (field === "youtubeRef") {
+        setTrackYouTubeRef(r.tracks[ti], input.value);
+      } else if (field === "access") {
+        r.tracks[ti][field] = input.value;
+      }
+      updateJsonPreview();
+    });
+  });
+
+  // Delete track
+  tbody.querySelectorAll("[data-del-ti]").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const ti = Number(btn.dataset.delTi);
+      r.tracks.splice(ti, 1);
+      tbody.innerHTML = renderTrackRows(r.tracks);
+      bindTrackEvents(r);
+      updateJsonPreview();
+    });
+  });
+
+  // Drag to reorder
+  let dragSrc = null;
+  tbody.querySelectorAll(".track-row").forEach(row => {
+    row.addEventListener("dragstart", e => { dragSrc = Number(row.dataset.ti); row.style.opacity = "0.4"; });
+    row.addEventListener("dragend", () => { row.style.opacity = ""; });
+    row.addEventListener("dragover", e => { e.preventDefault(); row.classList.add("track-row--drag-over"); });
+    row.addEventListener("dragleave", () => row.classList.remove("track-row--drag-over"));
+    row.addEventListener("drop", e => {
+      e.preventDefault();
+      row.classList.remove("track-row--drag-over");
+      const dropIdx = Number(row.dataset.ti);
+      if (dragSrc === null || dragSrc === dropIdx) return;
+      const [moved] = r.tracks.splice(dragSrc, 1);
+      r.tracks.splice(dropIdx, 0, moved);
+      tbody.innerHTML = renderTrackRows(r.tracks);
+      bindTrackEvents(r);
+      updateJsonPreview();
+      dragSrc = null;
+    });
+  });
+}
+
+function liveUpdateRelease(r) {
+  const g = id => document.getElementById(id)?.value ?? "";
+  r.name        = g("f_name");
+  r.artist      = g("f_artist");
+  r.year        = Number(g("f_year")) || r.year;
+  r.type        = g("f_type");
+  r.tag         = g("f_tag");
+  r.slug        = g("f_slug") || slug(r.name);
+  r.access      = g("f_access");
+  r.code        = g("f_code");
+  r.limit       = Number(g("f_limit")) || 0;
+  r.cover       = g("f_cover");
+  r.description = g("f_desc");
+  // tracks already updated via input events
+}
+
+// ── JSON PREVIEW ──────────────────────────────────────
+function updateJsonPreview() {
+  const r = state.releases[state.selectedIndex];
+  const preview = document.getElementById("jsonPreview");
+  if (!r) { preview.textContent = "// Select a release"; return; }
+  preview.textContent = JSON.stringify(toManifestRelease(r), null, 2);
+}
+
+function toManifestRelease(r) {
+  return {
+    slug: r.slug || slug(r.name),
+    name: r.name,
+    artist: r.artist,
+    year: r.year,
+    type: r.type,
+    cover: r.cover,
+    tag: r.tag,
+    access: r.access,
+    ...(r.access !== "public" ? { code: r.code, limit: r.limit } : {}),
+    ...(r.description ? { description: r.description } : {}),
+    tracks: r.tracks.map(t => ({
+      title: t.title,
+      file: t.file,
+      ...(t.youtubeVideoId ? { youtubeVideoId: t.youtubeVideoId } : {}),
+      ...(t.youtubeUrl ? { youtubeUrl: t.youtubeUrl } : {}),
+      duration: t.duration,
+      access: t.access ?? "public",
+      plays: t.plays ?? 0,
+      explicit: Boolean(t.explicit),
+    })),
+  };
+}
+
+function buildFullManifest() {
+  return {
+    appVersion: "1.0.0",
+    albums: state.releases.map(toManifestRelease),
+  };
+}
+
+// ── FILE I/O ──────────────────────────────────────────
+document.getElementById("fileInput").addEventListener("change", e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const json = JSON.parse(ev.target.result);
+      // Support both {albums:[]} and [{...}] formats
+      const list = Array.isArray(json) ? json : (json.albums ?? []);
+      state.releases = list.map(r => ({
+        slug: r.slug ?? slug(r.name ?? ""),
+        name: r.name ?? "",
+        artist: r.artist ?? "Minecraft Day",
+        year: r.year ?? 2024,
+        type: r.type ?? "Album",
+        cover: r.cover ?? "",
+        tag: r.tag ?? "",
+        access: r.access ?? "public",
+        code: r.code ?? "",
+        limit: r.limit ?? 0,
+        description: r.description ?? "",
+        tracks: (r.tracks ?? []).map(t => ({
+          title: t.title ?? "",
+          file: t.file ?? "",
+          youtubeVideoId: t.youtubeVideoId ?? t.youtubeId ?? "",
+          youtubeUrl: t.youtubeUrl ?? t.youtube ?? "",
+          duration: t.duration ?? "",
+          access: t.access ?? "public",
+          plays: t.plays ?? 0,
+          explicit: Boolean(t.explicit),
+        })),
+      }));
+      state.selectedIndex = state.releases.length > 0 ? 0 : -1;
+      renderSidebar();
+      renderEditor();
+      updateJsonPreview();
+      document.getElementById("statusText").textContent = `Loaded ${state.releases.length} releases from ${file.name}`;
+      toast(`Loaded ${state.releases.length} releases`);
+    } catch (err) {
+      toast("Invalid JSON file: " + err.message, "red");
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = "";
+});
+
+function exportJson() {
+  const data = JSON.stringify(buildFullManifest(), null, 2);
+  const blob = new Blob([data], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "releases.json";
+  a.click();
+  URL.revokeObjectURL(url);
+  toast("Downloaded releases.json!");
+}
+
+// ── ADD RELEASE ───────────────────────────────────────
+function openAddModal() {
+  document.getElementById("addModal").classList.remove("hidden");
+  document.getElementById("m_name").focus();
+}
+
+function closeAddModal() {
+  document.getElementById("addModal").classList.add("hidden");
+}
+
+document.getElementById("modalCreateBtn").addEventListener("click", () => {
+  const name   = document.getElementById("m_name").value.trim();
+  const artist = document.getElementById("m_artist").value.trim() || "Minecraft Day";
+  const year   = Number(document.getElementById("m_year").value) || new Date().getFullYear();
+  const type   = document.getElementById("m_type").value;
+  const tag    = document.getElementById("m_tag").value.trim();
+  const access = document.getElementById("m_access").value;
+
+  if (!name) { toast("Name is required", "red"); return; }
+
+  const newRelease = {
+    slug: slug(name),
+    name, artist, year, type, tag, access,
+    cover: "", code: "", limit: 0, description: "",
+    tracks: [],
+  };
+
+  state.releases.push(newRelease);
+  state.selectedIndex = state.releases.length - 1;
+  renderSidebar();
+  renderEditor();
+  updateJsonPreview();
+  closeAddModal();
+  toast(`Created "${name}"`);
+
+  // Clear modal
+  ["m_name","m_tag"].forEach(id => document.getElementById(id).value = "");
+});
+
+document.getElementById("modalCancelBtn").addEventListener("click", closeAddModal);
+document.getElementById("addModal").addEventListener("click", e => {
+  if (e.target === e.currentTarget) closeAddModal();
+});
+
+// ── WIRING ────────────────────────────────────────────
+document.getElementById("loadFileBtn").addEventListener("click", () => document.getElementById("fileInput").click());
+document.getElementById("addReleaseBtn").addEventListener("click", openAddModal);
+document.getElementById("sidebarAddBtn").addEventListener("click", openAddModal);
+document.getElementById("sidebarAddBtn2").addEventListener("click", openAddModal);
+document.getElementById("exportBtn").addEventListener("click", exportJson);
+document.getElementById("exportBtn2").addEventListener("click", exportJson);
+
+document.getElementById("copyJsonBtn").addEventListener("click", () => {
+  const text = document.getElementById("jsonPreview").textContent;
+  navigator.clipboard.writeText(text).then(() => toast("Copied to clipboard!"));
+});
+
+document.getElementById("copyAllBtn").addEventListener("click", () => {
+  const text = JSON.stringify(buildFullManifest(), null, 2);
+  navigator.clipboard.writeText(text).then(() => toast("Full manifest copied!"));
+});
+
+// Keyboard
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeAddModal();
+  if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+    e.preventDefault();
+    const r = state.releases[state.selectedIndex];
+    if (r) { liveUpdateRelease(r); renderSidebar(); updateJsonPreview(); toast("Saved!"); }
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key === "e") {
+    e.preventDefault();
+    exportJson();
+  }
+});
+
+// ── INIT: pre-load the current releases.json structure ─
+state.releases = [
+  {
+    slug: "american-idiot",
+    name: "American Idiot",
+    artist: "Minecraft Day",
+    year: 2004,
+    type: "Album",
+    tag: "Album_AmericanIdiot",
+    access: "public",
+    code: "",
+    limit: 0,
+    description: "Don't Wanna Be An American Idiot (Main - Standard)",
+    cover: ghUrl("Album_AmericanIdiot", "American.Idiot.png"),
+    tracks: [
+      { title:"American Idiot",                   file: ghUrl("Album_AmericanIdiot","American.Idiot.mp3"),                   youtubeUrl:"https://youtu.be/kdNPvp1rkTA?si=q74szZe7yJdu3Nen", duration:"2:54", access:"public", plays:1371471951, explicit:true  },
+      { title:"Jesus of Suburbia",                 file: ghUrl("Album_AmericanIdiot","Jesus.of.Suburbia.mp3"),                youtubeUrl:"https://youtu.be/eHWJOoFbhaI?si=97hsPCdDBWk-ETnd", duration:"9:08", access:"public", plays:892341122,  explicit:true  },
+      { title:"Holiday",                           file: ghUrl("Album_AmericanIdiot","Holiday.mp3"),                          youtubeUrl:"https://youtu.be/JcNE-renaFo?si=J5VtJc_b5Meh0Ttd", duration:"3:52", access:"public", plays:571347670,  explicit:false },
+      { title:"Boulevard of Broken Dreams",        file: ghUrl("Album_AmericanIdiot","Boulevard.of.Broken.Dreams.mp3"),       youtubeUrl:"https://youtu.be/yTRZaCDeu3w?si=YoWhojc1dP1kQiwN", duration:"4:20", access:"public", plays:1204839201, explicit:false },
+      { title:"Are We the Waiting",                file: ghUrl("Album_AmericanIdiot","Are.We.The.Waiting.mp3"),               youtubeUrl:"https://youtu.be/wuDyaapT4eY?si=hFMMBMIO_zsY38cv", duration:"2:42", access:"public", plays:312847210,  explicit:false },
+      { title:"St. Jimmy",                         file: ghUrl("Album_AmericanIdiot","St.Jimmy.mp3"),                         youtubeUrl:"https://youtu.be/k3cXYMQjH80?si=ZmK3iUCDN44aH_ZP", duration:"2:55", access:"public", plays:428293041,  explicit:true  },
+      { title:"Give Me Novacaine",                 file: ghUrl("Album_AmericanIdiot","Give.Me.Novacaine.mp3"),                youtubeUrl:"https://youtu.be/ZC_MtgIWY2U?si=EQa5ItOilXbV9FEX", duration:"3:25", access:"public", plays:287493012,  explicit:false },
+      { title:"She's a Rebel",                     file: ghUrl("Album_AmericanIdiot","She.s.a.Rebel.mp3"),                   youtubeUrl:"https://youtu.be/OWWj8RVIvSU?si=zimEWvvv7Arf0Lkf", duration:"2:00", access:"public", plays:341029384,  explicit:false },
+      { title:"Extraordinary Girl",                file: ghUrl("Album_AmericanIdiot","Extraordinary.Girl.mp3"),               youtubeUrl:"https://youtu.be/E0yYl3DwbyU?si=N3I3ZmmZgzpV_haz", duration:"3:33", access:"public", plays:267384920,  explicit:false },
+      { title:"Letterbomb",                        file: ghUrl("Album_AmericanIdiot","Letterbomb.mp3"),                       youtubeUrl:"https://youtu.be/xpsXHfjCaFw?si=hTv9nUCnjpnT_U0b", duration:"4:06", access:"public", plays:298473812,  explicit:true  },
+      { title:"Wake Me Up When September Ends",    file: ghUrl("Album_AmericanIdiot","Wake.me.up.When.September.Ends.mp3"),  youtubeUrl:"https://youtu.be/x-NV8mHzVd4?si=HUCX57ShHKNmrddp", duration:"4:45", access:"public", plays:1103847291, explicit:false },
+      { title:"Homecoming",                        file: ghUrl("Album_AmericanIdiot","Homecoming.mp3"),                       youtubeUrl:"https://youtu.be/tdnZRvUGJUw?si=a7KG-OcRuTRnzOxo", duration:"9:18", access:"public", plays:412938401,  explicit:true  },
+      { title:"Whatsername",                       file: ghUrl("Album_AmericanIdiot","Whatsername.mp3"),                      youtubeUrl:"https://youtu.be/4YmwAS7-w9I?si=GZrHbCTuiKh2aXXF", duration:"4:14", access:"public", plays:498273910,  explicit:false },
+    ],
+  },
+  {
+    slug: "nimrod",
+    name: "Nimrod",
+    artist: "Minecraft Day",
+    year: 1997,
+    type: "Album",
+    tag: "Album_Nimrod",
+    access: "early",
+    code: "MINECRAFTDAYNIMRODIAN1997",
+    limit: 0,
+    description: "Take a look at what's inside my head...",
+    cover: ghUrl("Album_Nimrod", "Nimrod.png"),
+    tracks: [
+      { title:"Nice Guys Finish Last",            file: ghUrl("Album_Nimrod","Nice.Guys.Finish.Last.mp3"),            youtubeUrl:"", duration:"2:47", access:"early", plays:312847210,  explicit:true  },
+      { title:"Hitchin' a Ride",                   file: ghUrl("Album_Nimrod","Hitchin.a.Ride.mp3"),                   youtubeUrl:"", duration:"2:51", access:"early", plays:289374012,  explicit:false },
+      { title:"The Grouch",                        file: ghUrl("Album_Nimrod","The.Grouch.mp3"),                        youtubeUrl:"", duration:"2:13", access:"early", plays:198273810,  explicit:false },
+      { title:"Redundant",                         file: ghUrl("Album_Nimrod","Redundant.mp3"),                         youtubeUrl:"", duration:"3:16", access:"early", plays:412938401,  explicit:false },
+      { title:"Sheet",                             file: ghUrl("Album_Nimrod","Sheet.mp3"),                             youtubeUrl:"", duration:"1:43", access:"early", plays:87293841,   explicit:true  },
+      { title:"Warning",                           file: ghUrl("Album_Nimrod","Warning.mp3"),                           youtubeUrl:"", duration:"2:31", access:"early", plays:234847291,  explicit:false },
+      { title:"Platypus (I Hate You)",             file: ghUrl("Album_Nimrod","Platypus.I.Hate.You.mp3"),              youtubeUrl:"", duration:"2:21", access:"early", plays:178293041,  explicit:true  },
+      { title:"Uptight",                           file: ghUrl("Album_Nimrod","Uptight.mp3"),                           youtubeUrl:"", duration:"2:14", access:"early", plays:143920834,  explicit:false },
+      { title:"Last Ride In",                      file: ghUrl("Album_Nimrod","Last.Ride.In.mp3"),                      youtubeUrl:"", duration:"4:04", access:"early", plays:129384721,  explicit:false },
+      { title:"Jinx",                              file: ghUrl("Album_Nimrod","Jinx.mp3"),                              youtubeUrl:"", duration:"1:55", access:"early", plays:98273819,   explicit:false },
+      { title:"Haushinka",                         file: ghUrl("Album_Nimrod","Haushinka.mp3"),                         youtubeUrl:"", duration:"3:34", access:"early", plays:112938471,  explicit:false },
+      { title:"Walking Alone",                     file: ghUrl("Album_Nimrod","Walking.Alone.mp3"),                     youtubeUrl:"", duration:"2:24", access:"early", plays:134728491,  explicit:false },
+      { title:"Worry Rock",                        file: ghUrl("Album_Nimrod","Worry.Rock.mp3"),                        youtubeUrl:"", duration:"2:25", access:"early", plays:109384721,  explicit:false },
+      { title:"Scattered",                         file: ghUrl("Album_Nimrod","Scattered.mp3"),                         youtubeUrl:"", duration:"2:53", access:"early", plays:187293841,  explicit:false },
+      { title:"All the Time",                      file: ghUrl("Album_Nimrod","All.the.Time.mp3"),                      youtubeUrl:"", duration:"1:34", access:"early", plays:89274019,   explicit:false },
+      { title:"Good Riddance (Time of Your Life)", file: ghUrl("Album_Nimrod","Good.Riddance.Time.of.Your.Life.mp3"), youtubeUrl:"", duration:"2:33", access:"early", plays:1893472019, explicit:false },
+      { title:"Dominated Love Slave",              file: ghUrl("Album_Nimrod","Dominated.Love.Slave.mp3"),              youtubeUrl:"", duration:"1:43", access:"early", plays:76293841,   explicit:true  },
+      { title:"The Reject",                        file: ghUrl("Album_Nimrod","The.Reject.mp3"),                        youtubeUrl:"", duration:"2:40", access:"early", plays:87293019,   explicit:false },
+    ],
+  },
+  {
+    slug: "dookie",
+    name: "Dookie",
+    artist: "Minecraft Day",
+    year: 1994,
+    type: "Album",
+    tag: "Album_Dookie",
+    access: "early",
+    code: "MINECRAFTDAYDOOKIAN1994",
+    limit: 0,
+    description: "I declare I don't care no more!",
+    cover: ghUrl("Album_Dookie", "Dookie.png"),
+    tracks: [
+      { title:"Burnout",          file: ghUrl("Album_Dookie","Burnout.mp3"),          duration:"2:07", access:"public", plays:178298731, explicit:true  },
+      { title:"Having a Blast",   file: ghUrl("Album_Dookie","Having.a.Blast.mp3"),   duration:"2:43", access:"early",  plays:87293810,  explicit:true  },
+      { title:"Chump",            file: ghUrl("Album_Dookie","Chump.mp3"),            duration:"2:54", access:"early",  plays:92847210,  explicit:false },
+      { title:"Longview",         file: ghUrl("Album_Dookie","Longview.mp3"),         duration:"3:59", access:"early",  plays:584732918, explicit:true  },
+      { title:"Welcome to Paradise", file: ghUrl("Album_Dookie","Welcome.to.Paradise.mp3"), duration:"3:44", access:"early", plays:492847391, explicit:true },
+      { title:"Pulling Teeth",    file: ghUrl("Album_Dookie","Pulling.Teeth.mp3"),    duration:"2:31", access:"early",  plays:112938472, explicit:true  },
+      { title:"Basket Case",      file: ghUrl("Album_Dookie","Basket.Case.mp3"),      duration:"3:01", access:"early",  plays:1029384721,explicit:true  },
+      { title:"She",              file: ghUrl("Album_Dookie","She.mp3"),              duration:"2:14", access:"early",  plays:203948271, explicit:false },
+      { title:"Sassafras Roots",  file: ghUrl("Album_Dookie","Sassafras.Roots.mp3"),  duration:"2:37", access:"early",  plays:98273810,  explicit:true  },
+      { title:"When I Come Around",file:ghUrl("Album_Dookie","When.I.Come.Around.mp3"),duration:"2:58",access:"early",  plays:712938472, explicit:false },
+      { title:"Coming Clean",     file: ghUrl("Album_Dookie","Coming.Clean.mp3"),     duration:"1:34", access:"early",  plays:87293841,  explicit:true  },
+      { title:"Emenius Sleepus",  file: ghUrl("Album_Dookie","Emenius.Sleepus.mp3"),  duration:"1:44", access:"early",  plays:63847291,  explicit:false },
+      { title:"In the End",       file: ghUrl("Album_Dookie","In.The.End.mp3"),       duration:"1:46", access:"early",  plays:72938401,  explicit:false },
+      { title:"F.O.D.",           file: ghUrl("Album_Dookie","F.O.D.mp3"),            duration:"2:50", access:"early",  plays:98273019,  explicit:true  },
+      { title:"All by Myself",    file: ghUrl("Album_Dookie","All.by.Myself.mp3"),    duration:"1:40", access:"early",  plays:52938471,  explicit:false },
+    ],
+  },
+];
+
+state.selectedIndex = 0;
+renderSidebar();
+renderEditor();
+updateJsonPreview();
+document.getElementById("statusText").textContent = "Pre-loaded: American Idiot + Nimrod + Dookie";
+</script>
+</body>
+</html>

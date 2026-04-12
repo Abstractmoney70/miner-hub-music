@@ -296,6 +296,28 @@
           "explicit": true
         }
       ]
+    },
+    {
+      "slug": "basket-case",
+      "name": "Basket Case",
+      "artist": "Minecraft Day",
+      "year": 1994,
+      "type": "Single",
+      "cover": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Single_BasketCase/Dookie.png",
+      "tag": "Single_BasketCase",
+      "access": "public",
+      "releaseDate": "1994-08-01",
+      "tracks": [
+        {
+          "title": "Basket Case",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Single_BasketCase/Basket.Case.mp3",
+          "youtubeUrl": "https://youtu.be/GEjx9pybBeQ",
+          "duration": "3:02",
+          "access": "public",
+          "plays": 0,
+          "explicit": true
+        }
+      ]
     }
   ]
 }

@@ -10,6 +10,7 @@
       "cover": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_AmericanIdiot/American.Idiot.png",
       "tag": "Album_AmericanIdiot",
       "access": "public",
+      "releaseDate": "2004-09-21",
       "description": "Don't Wanna Be An American Idiot (Main - Standard)",
       "tracks": [
         {
@@ -140,6 +141,7 @@
       "cover": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/Dookie.png",
       "tag": "Album_Dookie",
       "access": "early",
+      "releaseDate": "1994-02-01",
       "code": "MINECRAFTDAYDOOKIAN1994",
       "limit": 0,
       "description": "I declare I don't care no more!",
@@ -270,6 +272,28 @@
           "access": "early",
           "plays": 52938471,
           "explicit": false
+        }
+      ]
+    },
+    {
+      "slug": "longview",
+      "name": "Longview",
+      "artist": "Minecraft Day",
+      "year": 1994,
+      "type": "Single",
+      "cover": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Single_Longview/Dookie.png",
+      "tag": "Single_Longview",
+      "access": "public",
+      "releaseDate": "1994-02-01",
+      "tracks": [
+        {
+          "title": "Longview",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Single_Longview/Longview.mp3",
+          "youtubeUrl": "https://youtu.be/a_zLSOh3FwM",
+          "duration": "3:54",
+          "access": "public",
+          "plays": 0,
+          "explicit": true
         }
       ]
     }

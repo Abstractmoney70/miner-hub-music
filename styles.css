@@ -57,6 +57,96 @@ img { display: block; }
 ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #444; }
 
+/* ─── CUSTOM TITLE BAR ───────────────────────────────────────────────────── */
+.titlebar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  z-index: 9999;
+  -webkit-app-region: drag;
+  background: transparent;
+  pointer-events: none;
+}
+
+.titlebar__drag {
+  flex: 1;
+  height: 100%;
+  -webkit-app-region: drag;
+}
+
+.titlebar__controls {
+  display: flex;
+  align-items: center;
+  -webkit-app-region: no-drag;
+  pointer-events: all;
+}
+
+.titlebar__btn {
+  width: 46px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  font-size: 0.78rem;
+  color: var(--t2);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  -webkit-app-region: no-drag;
+}
+.titlebar__btn:hover { background: rgba(255,255,255,0.08); color: var(--text); }
+.titlebar__btn--close:hover { background: #e81123; color: #fff; }
+
+/* Push the whole app grid down so nothing hides under the title bar */
+.app { padding-top: 40px; }
+
+/* ─── CUSTOM TITLE BAR ───────────────────────────────────────────────────── */
+.titlebar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  z-index: 9999;
+  -webkit-app-region: drag;
+  background: transparent;
+  pointer-events: none;
+}
+
+.titlebar__drag {
+  flex: 1;
+  height: 100%;
+  -webkit-app-region: drag;
+}
+
+.titlebar__controls {
+  display: flex;
+  align-items: center;
+  -webkit-app-region: no-drag;
+  pointer-events: all;
+}
+
+.titlebar__btn {
+  width: 46px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  font-size: 0.78rem;
+  color: var(--t2);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  -webkit-app-region: no-drag;
+}
+.titlebar__btn:hover { background: rgba(255,255,255,0.08); color: var(--text); }
+.titlebar__btn--close:hover { background: #e81123; color: #fff; }
+
+/* Push app grid down below the title bar */
+.app { padding-top: 40px; }
+
 /* ─── LAYOUT ─────────────────────────────────────────────────────────── */
 .app {
   display: grid;
@@ -166,7 +256,7 @@ img { display: block; }
   color: inherit;
 }
 .lib-album:hover { background: rgba(255,255,255,0.06); }
-.lib-album.is-active { background: rgba(255,255,255,0.08); }
+.lib-album.is-active { background: rgba(29,185,84,0.08); border-left: 2px solid var(--green); padding-left: 6px; }
 .lib-album__art {
   width: 42px; height: 42px;
   border-radius: 5px;
@@ -314,8 +404,6 @@ img { display: block; }
   width: 100%;
 }
 .search__input::placeholder { color: var(--text-3); }
-
-.topbar__right { display: flex; justify-content: flex-end; }
 
 .topbar__avatar {
   width: 30px; height: 30px;
@@ -816,7 +904,120 @@ img { display: block; }
 
 .search-section { margin-bottom: 28px; }
 
-/* ─── QUEUE PANEL ─────────────────────────────────────────────────────── */
+/* ─── TOPBAR SHORTCUT BUTTON ──────────────────────────────────────────── */
+.topbar__right { display: flex; align-items: center; gap: 10px; justify-content: flex-end; }
+
+.topbar__shortcut-btn {
+  width: 26px; height: 26px;
+  border-radius: 999px;
+  background: transparent;
+  border: 1px solid var(--border-2);
+  color: var(--text-3);
+  font-size: 0.82rem;
+  font-weight: 700;
+  display: grid;
+  place-items: center;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+.topbar__shortcut-btn:hover { border-color: var(--text); color: var(--text); background: rgba(255,255,255,0.06); }
+
+/* ─── SIDEBAR NOW-PLAYING INDICATOR ──────────────────────────────────── */
+.lib-album__art-wrap {
+  position: relative;
+  width: 42px; height: 42px;
+  flex-shrink: 0;
+}
+.lib-album__art-wrap .lib-album__art {
+  width: 100%; height: 100%;
+}
+.lib-album.is-active .lib-album__art { opacity: 0.7; }
+.lib-album__playing-dot {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+  background: rgba(0,0,0,0.35);
+  font-size: 0.7rem;
+  color: var(--green);
+  pointer-events: none;
+}
+.lib-album__playing-dot::after { content: "▶"; }
+
+/* ─── HISTORY PAGE ────────────────────────────────────────────────────── */
+.history-page {
+  padding-bottom: 40px;
+}
+
+.history-hero {
+  padding: 32px 28px 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.history-hero__title {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+
+.history-hero__sub {
+  color: var(--text-3);
+  font-size: 0.88rem;
+  margin-bottom: 20px;
+}
+
+.history-stats {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+
+.history-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.history-stat__val {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  letter-spacing: 0.03em;
+  color: var(--text);
+  line-height: 1;
+}
+
+.history-stat__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-3);
+}
+
+.history-list {
+  padding: 0 28px 32px;
+}
+
+.history-list__head {
+  display: grid;
+  grid-template-columns: 36px 1fr 90px 54px;
+  gap: 12px;
+  padding: 10px 8px 8px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-3);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  z-index: 1;
+}
+
+
 .queue {
   background: var(--surface);
   border-radius: var(--radius-lg);
@@ -831,6 +1032,8 @@ img { display: block; }
   align-items: center;
   justify-content: space-between;
   padding: 16px 16px 12px;
+  /* Extra right padding so Windows native titlebar controls don't overlap Clear */
+  padding-right: 154px;
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
 }

@@ -33,6 +33,9 @@
         <a class="nav-item" href="#/search" data-route="search">
           <span class="nav-item__icon">◈</span> Search
         </a>
+        <a class="nav-item" href="#/history" data-route="history">
+          <span class="nav-item__icon">◈</span> History
+        </a>
       </nav>
 
       <div class="sidebar__section-label">Your Library</div>
@@ -40,17 +43,20 @@
         <div class="sidebar__empty">Loading...</div>
       </div>
 
-      <div class="sidebar__footer">
-        <div class="sidebar__manifest">
-          <span class="manifest__label">MANIFEST</span>
-          <code id="manifestPath">releases.json</code>
-        </div>
-        <button class="btn-ghost" id="reloadBtn">↺ Reload</button>
-      </div>
     </aside>
 
     <!-- MAIN -->
     <div class="main">
+
+      <!-- CUSTOM TITLE BAR (draggable, no native frame) -->
+      <div class="titlebar" id="titlebar">
+        <div class="titlebar__drag"></div>
+        <div class="titlebar__controls" id="titlebarControls">
+          <button class="titlebar__btn titlebar__btn--min"   id="winMin"   title="Minimize">─</button>
+          <button class="titlebar__btn titlebar__btn--max"   id="winMax"   title="Maximize">□</button>
+          <button class="titlebar__btn titlebar__btn--close" id="winClose" title="Close">✕</button>
+        </div>
+      </div>
 
       <!-- TOPBAR -->
       <header class="topbar">
@@ -71,6 +77,7 @@
         </div>
 
         <div class="topbar__right">
+          <button class="topbar__shortcut-btn" id="shortcutsBtn" title="Keyboard shortcuts">?</button>
           <div class="topbar__avatar">M</div>
         </div>
       </header>
@@ -104,7 +111,6 @@
         <div class="bar__title" id="barTitle">Nothing playing</div>
         <div class="bar__artist" id="barArtist">—</div>
       </div>
-      <button class="bar__like" id="barLike" title="Download track">⬇</button>
     </div>
 
     <div class="bar__center">
@@ -126,7 +132,6 @@
     </div>
 
     <div class="bar__right">
-      <button class="bar__ctrl bar__ctrl--sm" id="queueToggleBtn" title="Queue">☰</button>
       <span class="bar__vol-icon">♪</span>
       <div class="bar__vol-rail" id="volRail">
         <div class="bar__vol-fill" id="volFill"></div>

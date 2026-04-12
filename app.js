@@ -95,7 +95,8 @@ const $ = id => document.getElementById(id);
 const el = {
   page:          $("page"),
   sidebarLib:    $("sidebarLibrary"),
-  reloadBtn:     $("reloadBtn"),
+  reloadBtn:     null,  // removed — manifest auto-fetches on load
+  shortcutsBtn:  $("shortcutsBtn"),
   backBtn:       $("backBtn"),
   fwdBtn:        $("fwdBtn"),
   searchInput:   $("searchInput"),
@@ -106,7 +107,6 @@ const el = {
   barCoverPh:    $("barCoverPlaceholder"),
   barTitle:      $("barTitle"),
   barArtist:     $("barArtist"),
-  barLike:       $("barLike"),
   timeNow:       $("timeNow"),
   timeDur:       $("timeDur"),
   progressRail:  $("progressRail"),
@@ -258,6 +258,7 @@ function route() {
   const parts = hash.split("/").filter(Boolean);
   if (!parts.length) return { name: "home" };
   if (parts[0] === "albums") return { name: "albums" };
+  if (parts[0] === "history") return { name: "history" };
   if (parts[0] === "search") return { name: "search", q: decodeURIComponent(parts.slice(1).join("/") || "") };
   if (parts[0] === "album" && parts[1]) return { name: "album", slug: decodeURIComponent(parts[1]) };
   return { name: "home" };
@@ -268,9 +269,10 @@ function syncNav() {
   document.querySelectorAll(".nav-item").forEach(a => {
     const dr = a.dataset.route;
     a.classList.toggle("is-active",
-      (dr === "home"   && r.name === "home")   ||
-      (dr === "albums" && (r.name === "albums" || r.name === "album")) ||
-      (dr === "search" && r.name === "search")
+      (dr === "home"    && r.name === "home")   ||
+      (dr === "albums"  && (r.name === "albums" || r.name === "album")) ||
+      (dr === "search"  && r.name === "search") ||
+      (dr === "history" && r.name === "history")
     );
   });
 }
@@ -397,23 +399,102 @@ function showVersionsModal(currentAlbum, versions) {
 }
 
 
+// ─── KEYBOARD SHORTCUTS MODAL ────────────────────────────────────────────────
+function showShortcutsModal() {
+  document.getElementById("shortcutsModal")?.remove();
+  const groups = [
+    {
+      label: "Playback",
+      shortcuts: [
+        { keys: ["Space"],          desc: "Play / Pause" },
+        { keys: ["Alt", "→"],       desc: "Next track" },
+        { keys: ["Alt", "←"],       desc: "Previous track" },
+        { keys: ["Alt", "↑"],       desc: "Volume up" },
+        { keys: ["Alt", "↓"],       desc: "Volume down" },
+      ],
+    },
+    {
+      label: "Controls",
+      shortcuts: [
+        { keys: ["S"],              desc: "Toggle shuffle" },
+        { keys: ["R"],              desc: "Cycle repeat mode" },
+      ],
+    },
+    {
+      label: "App",
+      shortcuts: [
+        { keys: ["?"],              desc: "Show this cheatsheet" },
+        { keys: ["Esc"],            desc: "Close modal / blur search" },
+      ],
+    },
+  ];
+
+  const renderKey = k => `<kbd style="display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:22px;padding:0 6px;background:#2a2a2a;border:1px solid rgba(255,255,255,0.18);border-bottom:2px solid rgba(255,255,255,0.1);border-radius:5px;font-family:var(--font-mono);font-size:0.7rem;color:var(--text-2);white-space:nowrap">${esc(k)}</kbd>`;
+
+  const modal = document.createElement("div");
+  modal.id = "shortcutsModal";
+  modal.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.8);display:grid;place-items:center;z-index:9999;backdrop-filter:blur(6px);";
+  modal.innerHTML = `
+    <div style="background:#161616;border:1px solid rgba(255,255,255,0.13);border-radius:16px;padding:32px;width:500px;max-width:92vw;display:flex;flex-direction:column;gap:24px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="font-family:var(--font-display);font-size:1.6rem;letter-spacing:0.04em;">Keyboard Shortcuts</div>
+        <button id="shortcutsCloseBtn" style="color:var(--text-3);font-size:1.1rem;padding:4px 8px;border-radius:6px;background:transparent;border:none;cursor:pointer;transition:color 0.12s;">✕</button>
+      </div>
+      ${groups.map(g => `
+        <div>
+          <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.12em;color:var(--text-3);margin-bottom:10px;">${esc(g.label)}</div>
+          <div style="display:flex;flex-direction:column;gap:2px;">
+            ${g.shortcuts.map(s => `
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-radius:8px;transition:background 0.12s;" class="shortcut-row">
+                <span style="font-size:0.86rem;color:var(--text-2);">${esc(s.desc)}</span>
+                <div style="display:flex;align-items:center;gap:4px;">${s.keys.map(renderKey).join(`<span style="color:var(--text-3);font-size:0.7rem;margin:0 2px">+</span>`)}</div>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `).join("")}
+      <div style="text-align:center;font-size:0.75rem;color:var(--text-3);border-top:1px solid var(--border);padding-top:16px;">
+        Shortcuts are disabled while typing in the search bar.
+      </div>
+    </div>`;
+
+  document.body.appendChild(modal);
+
+  // Hover effect on rows
+  modal.querySelectorAll(".shortcut-row").forEach(row => {
+    row.addEventListener("mouseenter", () => row.style.background = "rgba(255,255,255,0.04)");
+    row.addEventListener("mouseleave", () => row.style.background = "transparent");
+  });
+
+  const close = () => modal.remove();
+  document.getElementById("shortcutsCloseBtn").addEventListener("click", close);
+  modal.addEventListener("click", e => { if (e.target === modal) close(); });
+  const onKey = e => { if (e.key === "Escape" || (e.code === "Slash" && e.shiftKey)) { close(); document.removeEventListener("keydown", onKey); } };
+  document.addEventListener("keydown", onKey);
+}
+
 function renderSidebar() {
   const list = visibleAlbums();
+  const nowPlayingSlug = currentTrack()?.albumSlug ?? null;
   if (!list.length) {
     el.sidebarLib.innerHTML = `<div style="padding:16px;color:var(--text-3);font-size:0.82rem">No albums loaded.</div>`;
     return;
   }
   el.sidebarLib.innerHTML = list.map(a => {
-    const locked = isAlbumLocked(a);
+    const locked    = isAlbumLocked(a);
+    const isPlaying = a.slug === nowPlayingSlug;
     return `
-      <a class="lib-album" href="#/album/${encodeURIComponent(a.slug)}">
-        ${a.cover
-          ? `<img class="lib-album__art" src="${esc(a.cover)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">`
-          : `<div class="lib-album__art" style="display:grid;place-items:center;font-size:1.2rem">⛏</div>`
-        }
+      <a class="lib-album ${isPlaying ? "is-active" : ""}" href="#/album/${encodeURIComponent(a.slug)}">
+        <div class="lib-album__art-wrap">
+          ${a.cover
+            ? `<img class="lib-album__art" src="${esc(a.cover)}" alt="" loading="lazy" onerror="this.style.visibility='hidden'">`
+            : `<div class="lib-album__art" style="display:grid;place-items:center;font-size:1.2rem">⛏</div>`
+          }
+          ${isPlaying ? `<div class="lib-album__playing-dot"></div>` : ""}
+        </div>
         <div>
           <div class="lib-album__name">${locked ? "🔒 " : ""}${esc(a.name)}</div>
-          <div class="lib-album__meta">${esc(a.type ?? "Album")} · ${esc(a.year)}</div>
+          <div class="lib-album__meta">${isPlaying ? `<span style="color:var(--green);font-size:0.68rem;font-weight:700;">▶ NOW PLAYING · </span>` : ""}${esc(a.type ?? "Album")} · ${esc(a.year)}</div>
         </div>
       </a>`;
   }).join("");
@@ -659,6 +740,89 @@ function renderSearch(q) {
   bindPageEvents();
 }
 
+function renderHistory() {
+  const counts = state.localPlayCounts; // { "album-slug::index": count }
+  const entries = Object.entries(counts)
+    .map(([id, count]) => ({ track: trackById(id), count: Number(count) }))
+    .filter(e => e.track && e.count > 0)
+    .sort((a, b) => b.count - a.count);
+
+  const totalPlays  = entries.reduce((s, e) => s + e.count, 0);
+  const totalTracks = entries.length;
+
+  // Most played album: group by albumSlug, sum counts
+  const albumCounts = {};
+  entries.forEach(({ track, count }) => {
+    albumCounts[track.albumSlug] = (albumCounts[track.albumSlug] || 0) + count;
+  });
+  const topAlbumSlug  = Object.entries(albumCounts).sort((a, b) => b[1] - a[1])[0]?.[0];
+  const topAlbum      = topAlbumSlug ? albumBySlug(topAlbumSlug) : null;
+
+  el.page.innerHTML = `
+    <div class="history-page">
+      <div class="history-hero">
+        <div class="history-hero__title">Your History</div>
+        <div class="history-hero__sub">Everything you've listened to on this device.</div>
+        ${totalPlays > 0 ? `
+        <div class="history-stats">
+          <div class="history-stat">
+            <div class="history-stat__val">${totalPlays.toLocaleString("en-US")}</div>
+            <div class="history-stat__label">Total Plays</div>
+          </div>
+          <div class="history-stat">
+            <div class="history-stat__val">${totalTracks}</div>
+            <div class="history-stat__label">Tracks Played</div>
+          </div>
+          ${topAlbum ? `
+          <div class="history-stat">
+            <div class="history-stat__val" style="font-size:0.9rem;font-family:var(--font-body)">${esc(topAlbum.name)}</div>
+            <div class="history-stat__label">Most Played Album</div>
+          </div>` : ""}
+        </div>` : ""}
+      </div>
+
+      ${entries.length === 0 ? `
+        <div class="page-empty" style="height:280px">
+          <div style="font-size:2.5rem;margin-bottom:12px">⛏</div>
+          <div style="font-family:var(--font-display);font-size:1.4rem;letter-spacing:0.04em;margin-bottom:8px">Nothing here yet</div>
+          <div style="color:var(--text-3);font-size:0.88rem">Start listening — plays count after 60 seconds.</div>
+        </div>
+      ` : `
+        <div class="history-list">
+          <div class="history-list__head">
+            <div>#</div>
+            <div>Track</div>
+            <div style="text-align:right">Your Plays</div>
+            <div style="text-align:right">⏱</div>
+          </div>
+          ${entries.map(({ track, count }, i) => {
+            const playing = currentTrack()?.id === track.id;
+            return `
+            <div class="track-row ${playing ? "is-playing" : ""}" data-track-id="${esc(track.id)}">
+              <div class="track-row__num">
+                ${playing
+                  ? `<span style="color:var(--green)">▶</span>`
+                  : `<button class="track-row__play-btn" data-action="play-track" data-track-id="${esc(track.id)}">${i + 1}</button>`
+                }
+              </div>
+              <div>
+                <div class="track-row__title">${esc(track.title)}</div>
+                <div class="track-row__artist">
+                  ${track.explicit ? `<span class="badge-e">E</span>` : ""}
+                  ${esc(track.albumName)} · ${esc(track.artist)}
+                </div>
+              </div>
+              <div class="track-row__plays" style="color:var(--green);font-weight:600">${count.toLocaleString("en-US")}</div>
+              <div class="track-row__dur">${esc(track.duration || "—")}</div>
+            </div>`;
+          }).join("")}
+        </div>
+      `}
+    </div>`;
+  bindPageEvents();
+}
+
+
 function renderPage() {
   const r = route();
   syncNav();
@@ -666,6 +830,7 @@ function renderPage() {
   if (r.name === "albums") { renderAlbums(); return; }
   if (r.name === "album")  { renderAlbumPage(r.slug); return; }
   if (r.name === "search") { renderSearch(r.q); return; }
+  if (r.name === "history") { renderHistory(); return; }
   renderHome();
 }
 
@@ -684,10 +849,12 @@ function showContextMenu(x, y, items) {
   ).join("");
   document.body.appendChild(menu);
 
-  // Clamp to viewport
-  const rect = menu.getBoundingClientRect();
-  if (rect.right  > window.innerWidth)  menu.style.left = `${x - rect.width}px`;
-  if (rect.bottom > window.innerHeight) menu.style.top  = `${y - rect.height}px`;
+  // Clamp to viewport so menu never goes off-screen
+  requestAnimationFrame(() => {
+    const rect = menu.getBoundingClientRect();
+    if (rect.right  > window.innerWidth)  menu.style.left = `${x - rect.width}px`;
+    if (rect.bottom > window.innerHeight) menu.style.top  = `${y - rect.height}px`;
+  });
 
   menu.querySelectorAll(".ctx-item").forEach(btn => {
     btn.addEventListener("mouseenter", () => btn.style.background = "rgba(255,255,255,0.07)");
@@ -699,8 +866,28 @@ function showContextMenu(x, y, items) {
     });
   });
 
-  const dismiss = e => { if (!menu.contains(e.target)) { menu.remove(); document.removeEventListener("mousedown", dismiss); } };
-  setTimeout(() => document.addEventListener("mousedown", dismiss), 0);
+  // Dismiss on any outside click OR scroll OR Escape
+  const dismiss = e => {
+    if (!menu.contains(e.target)) {
+      menu.remove();
+      document.removeEventListener("mousedown", dismiss);
+      document.removeEventListener("keydown", dismissKey);
+      window.removeEventListener("scroll", dismiss, true);
+    }
+  };
+  const dismissKey = e => {
+    if (e.key === "Escape") {
+      menu.remove();
+      document.removeEventListener("mousedown", dismiss);
+      document.removeEventListener("keydown", dismissKey);
+      window.removeEventListener("scroll", dismiss, true);
+    }
+  };
+  setTimeout(() => {
+    document.addEventListener("mousedown", dismiss);
+    document.addEventListener("keydown", dismissKey);
+    window.addEventListener("scroll", dismiss, true);
+  }, 0);
 }
 
 // ─── PAGE EVENT BINDING ───────────────────────────────────────────────────────
@@ -746,7 +933,7 @@ function bindPageEvents() {
       const t = trackById(row.dataset.trackId);
       if (!t) return;
       window._ctxHandlers = {
-        "queue":    () => { state.queue.push(t); renderQueue(); showToast(`Queued: ${t.title}`); },
+        "queue":    () => queueTrackNext(t),
         "download": () => { if (t.file) downloadTrack(t); },
       };
       showContextMenu(e.clientX, e.clientY, [
@@ -890,25 +1077,52 @@ function queueAlbum(album) {
 }
 
 function playTrackNow(track) {
-  const at = state.queueIndex >= 0 ? state.queueIndex + 1 : 0;
-  state.queue.splice(at, 0, track);
-  if (state.shuffle) state.shuffleOrder = buildShuffleOrder(state.queue.length, at);
-  playQueueIndex(at);
+  // Clicking a track always replaces the queue with just that one track.
+  // Use right-click → "Add to queue" to insert without replacing.
+  state.queue      = [track];
+  state.queueIndex = -1;
+  if (state.shuffle) state.shuffleOrder = buildShuffleOrder(1, 0);
+  playQueueIndex(0);
   renderPage();
 }
 
+function queueTrackNext(track) {
+  // Insert immediately after the current track (or just start playing if nothing is queued).
+  if (!state.queue.length || state.queueIndex < 0) {
+    playTrackNow(track);
+    return;
+  }
+  const at = state.queueIndex + 1;
+  state.queue.splice(at, 0, track);
+  if (state.shuffle) state.shuffleOrder = buildShuffleOrder(state.queue.length, state.queueIndex);
+  renderQueue();
+  showToast(`Up next: ${track.title}`);
+}
+
+// Track play-count timer so we cancel it if user skips before 60s
+let _playCountTimer = null;
 
 async function playQueueIndex(i) {
   const t = state.queue[i];
   if (!t) return;
   state.queueIndex = i;
 
-  // Reset the 80% play counter for this new track
-  resetPlayTracking(t.id);
+  // Cancel any pending play-count timer from the previous track
+  if (_playCountTimer !== null) { clearTimeout(_playCountTimer); _playCountTimer = null; }
 
   if (t.file) {
     el.audio.src = t.file;
-    try { await el.audio.play(); }
+    try {
+      await el.audio.play();
+      // Count a play only after the user has listened for at least 60 seconds
+      _playCountTimer = setTimeout(async () => {
+        _playCountTimer = null;
+        // Only count if this track is still the one playing
+        if (currentTrack()?.id === t.id && !el.audio.paused) {
+          await countLocalPlay(t);
+        }
+      }, 60_000);
+    }
     catch (err) { console.error(err); showToast("Couldn't play this track", true); }
   }
   updateBar();
@@ -934,11 +1148,19 @@ function getShuffledPrev() {
 function playNext() {
   if (!state.queue.length) return;
 
-  // Repeat one — restart current track, reset play tracking
+  // Repeat one — just restart
   if (state.repeat === "one") {
     el.audio.currentTime = 0;
-    resetPlayTracking(currentTrack()?.id ?? null);
-    el.audio.play().catch(console.error);
+    if (_playCountTimer !== null) { clearTimeout(_playCountTimer); _playCountTimer = null; }
+    el.audio.play()
+      .then(() => {
+        _playCountTimer = setTimeout(async () => {
+          _playCountTimer = null;
+          const ct = currentTrack();
+          if (ct && !el.audio.paused) await countLocalPlay(ct);
+        }, 60_000);
+      })
+      .catch(console.error);
     return;
   }
 
@@ -1095,6 +1317,7 @@ function updateBar() {
   document.title = el.audio.paused
     ? `⏸ ${t.title} — Miner Day Hub`
     : `▶ ${t.title} — Miner Day Hub`;
+  renderSidebar();
 }
 
 function setProgress(pct) {
@@ -1156,21 +1379,12 @@ el.audio.addEventListener("timeupdate", () => {
   el.timeNow.textContent = fmtTime(cur);
   el.timeDur.textContent = fmtTime(dur);
   if (dur > 0) setProgress(cur / dur * 100);
-  // Count play at 80% threshold
-  maybeCountPlay(false);
 });
-el.audio.addEventListener("play",  () => { updateBar(); renderQueue(); });
-el.audio.addEventListener("pause", updateBar);
-el.audio.addEventListener("ended", () => {
-  // Always count on natural end regardless of position
-  maybeCountPlay(true);
-  playNext();
-});
+el.audio.addEventListener("play",           () => { updateBar(); renderQueue(); });
+el.audio.addEventListener("pause",          updateBar);
+el.audio.addEventListener("ended",          playNext);
 el.audio.addEventListener("loadedmetadata", updateBar);
-el.audio.addEventListener("error", () => {
-  console.error(el.audio.error);
-  showToast("Couldn't load audio", true);
-});
+el.audio.addEventListener("error",          () => { console.error(el.audio.error); showToast("Couldn't load audio", true); });
 
 // ─── TRANSPORT CONTROLS ───────────────────────────────────────────────────────
 el.playBtn.addEventListener("click", async () => {
@@ -1208,7 +1422,6 @@ el.repeatBtn.addEventListener("click", () => {
   savePersisted();
 });
 
-el.barLike.addEventListener("click", () => { const t = currentTrack(); if (t?.file) downloadTrack(t); });
 el.clearQueueBtn.addEventListener("click", clearQueue);
 
 // Queue panel toggle
@@ -1233,7 +1446,8 @@ el.searchInput.addEventListener("keydown", e => {
 // ─── NAV ──────────────────────────────────────────────────────────────────────
 el.backBtn.addEventListener("click",  () => history.back());
 el.fwdBtn.addEventListener("click",   () => history.forward());
-el.reloadBtn.addEventListener("click", loadManifest);
+el.reloadBtn?.addEventListener("click", loadManifest);
+el.shortcutsBtn?.addEventListener("click", showShortcutsModal);
 window.addEventListener("hashchange", () => renderPage());
 
 // ─── KEYBOARD SHORTCUTS ───────────────────────────────────────────────────────
@@ -1247,6 +1461,7 @@ document.addEventListener("keydown", e => {
   if (e.code === "KeyR" && !e.ctrlKey && !e.metaKey) el.repeatBtn.click();
   if (e.code === "ArrowUp"   && e.altKey)  { e.preventDefault(); setVolume(clamp(state.volume * 100 + 10, 0, 100)); }
   if (e.code === "ArrowDown" && e.altKey)  { e.preventDefault(); setVolume(clamp(state.volume * 100 - 10, 0, 100)); }
+  if (e.code === "Slash" && e.shiftKey)    showShortcutsModal(); // ? key
 });
 
 // ─── TOAST ────────────────────────────────────────────────────────────────────
@@ -1267,130 +1482,71 @@ document.head.insertAdjacentHTML("beforeend", `<style>
 .track-row--locked:hover{background:transparent!important}
 </style>`);
 
-// ─── DAILY VIEWS ──────────────────────────────────────────────────────────────
-// The GitHub Action writes daily_views.json to the repo once a day.
-// We fetch it from GitHub raw, cache it locally as daily_views_client.json
-// (via Electron's userData), and merge with local play counts.
-//
-// daily_views.json shape:
-//   { "fetchedAt": "...", "views": { "american-idiot::0": 1234, ... } }
+// ─── DAILY VIEWS PIPELINE ────────────────────────────────────────────────────
+// GitHub Action writes daily_views.json once a day.
+// We fetch it from raw.githubusercontent.com, cache in localStorage for 6h.
+// Shape: { "fetchedAt": "...", "views": { "american-idiot::0": 1234, ... } }
 
-const DAILY_VIEWS_RAW_URL =
-  `https://raw.githubusercontent.com/${CONFIG.owner}/${CONFIG.repo}/main/daily_views.json`;
-
+const DAILY_VIEWS_RAW_URL   = `https://raw.githubusercontent.com/${CONFIG.owner}/${CONFIG.repo}/main/daily_views.json`;
 const DAILY_VIEWS_CACHE_KEY = "mdh_daily_views_cache";
-const DAILY_VIEWS_CACHE_TTL = 6 * 60 * 60 * 1000; // re-fetch after 6 h even if cached
+const DAILY_VIEWS_CACHE_TTL = 6 * 60 * 60 * 1000; // 6 hours
 
-// Load cached daily views from localStorage (offline fallback)
 function loadDailyViewsCache() {
   try {
     const raw = localStorage.getItem(DAILY_VIEWS_CACHE_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw); // { fetchedAt, views, cachedAt }
+    return raw ? JSON.parse(raw) : null;
   } catch { return null; }
 }
 
-// Persist daily views to localStorage
 function saveDailyViewsCache(data) {
   try {
-    localStorage.setItem(DAILY_VIEWS_CACHE_KEY, JSON.stringify({
-      ...data,
-      cachedAt: Date.now(),
-    }));
-  } catch { /* storage full — ignore */ }
+    localStorage.setItem(DAILY_VIEWS_CACHE_KEY, JSON.stringify({ ...data, cachedAt: Date.now() }));
+  } catch { /* storage full */ }
 }
 
-// Apply a views map { trackId: count } into state
 function applyDailyViews(views) {
   for (const [trackId, count] of Object.entries(views)) {
     const n = Number(count);
-    if (Number.isFinite(n) && n >= 0) {
-      state.youtubeViewCounts[trackId] = n;
-    }
+    if (Number.isFinite(n) && n >= 0) state.youtubeViewCounts[trackId] = n;
   }
 }
 
 async function refreshDailyViews() {
-  // Check if cache is fresh enough
   const cached = loadDailyViewsCache();
+
+  // Apply cached data immediately so counts show up without waiting for network
   if (cached?.views) {
     applyDailyViews(cached.views);
     renderPage();
-
     // If cache is still fresh, stop here
-    const age = Date.now() - (cached.cachedAt ?? 0);
-    if (age < DAILY_VIEWS_CACHE_TTL) {
-      console.log("[views] Using cached daily_views.json (age:", Math.round(age / 60000), "min)");
+    if (Date.now() - (cached.cachedAt ?? 0) < DAILY_VIEWS_CACHE_TTL) {
+      console.log("[views] Cache fresh, skipping fetch.");
       return;
     }
   }
 
-  // Fetch fresh daily_views.json from GitHub raw
+  // Fetch fresh from GitHub raw
   try {
-    const res = await fetch(DAILY_VIEWS_RAW_URL + `?t=${Date.now()}`, {
+    const res = await fetch(`${DAILY_VIEWS_RAW_URL}?t=${Date.now()}`, {
       cache: "no-store",
       signal: AbortSignal.timeout(10000),
     });
-
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
     const data = await res.json();
-
-    if (!data?.views || typeof data.views !== "object") {
-      throw new Error("Unexpected daily_views.json shape");
-    }
-
+    if (!data?.views || typeof data.views !== "object") throw new Error("Bad daily_views.json shape");
     applyDailyViews(data.views);
     saveDailyViewsCache(data);
     renderPage();
-    console.log(`[views] Fetched fresh daily_views.json (${Object.keys(data.views).length} tracks, fetched at ${data.fetchedAt})`);
+    console.log(`[views] Fetched daily_views.json — ${Object.keys(data.views).length} tracks`);
   } catch (err) {
-    // Not a fatal error — just use cached/fallback values
     console.warn("[views] Could not fetch daily_views.json:", err.message);
-    if (!cached?.views) {
-      console.log("[views] No cache available — play counts will show local plays only.");
-    }
   }
 }
 
-// ─── LOCAL PLAY TRACKING ──────────────────────────────────────────────────────
-// Tracks whether we've already counted a play for the current audio src.
-// Reset when src changes, fire at 80% or on 'ended'.
-const _playTracking = {
-  counted: false,   // have we counted this playthrough yet?
-  trackId: null,    // which track are we tracking
-};
-
-function resetPlayTracking(trackId) {
-  _playTracking.counted = false;
-  _playTracking.trackId = trackId;
-}
-
-function maybeCountPlay(force = false) {
-  if (_playTracking.counted) return;
-  if (!_playTracking.trackId) return;
-
-  const dur = el.audio.duration;
-  const cur = el.audio.currentTime;
-
-  // Count at 80% of duration OR forced (on 'ended')
-  const pct = isFinite(dur) && dur > 0 ? cur / dur : 0;
-  if (!force && pct < 0.8) return;
-
-  _playTracking.counted = true;
-
-  const track = trackById(_playTracking.trackId);
-  if (!track) return;
-
-  countLocalPlay(track);
-}
-
-// ─── MANIFEST ─────────────────────────────────────────────────────────────────
 async function loadManifest() {
   try {
     state.manifest = await fetchManifest();
     renderSidebar(); renderQueue(); renderPage(); primeColors();
-    // Fire view refresh after manifest loads — non-blocking
     refreshDailyViews();
   } catch (err) {
     console.error("Manifest load failed:", err);
@@ -1402,7 +1558,18 @@ async function loadManifest() {
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 async function init() {
-  // Fetch PAT from Electron main process (if running in Electron)
+  // ── Custom title bar controls (Electron only) ─────────────────────────────
+  if (window.electronAPI?.windowMinimize) {
+    document.getElementById("winMin")  ?.addEventListener("click", () => window.electronAPI.windowMinimize());
+    document.getElementById("winMax")  ?.addEventListener("click", () => window.electronAPI.windowMaximize());
+    document.getElementById("winClose")?.addEventListener("click", () => window.electronAPI.windowClose());
+  } else {
+    // Browser mode — remove the title bar so it doesn't take up space
+    document.getElementById("titlebar")?.remove();
+    document.querySelector(".app")?.style.setProperty("padding-top", "0");
+  }
+
+  // Fetch PAT from Electron main process
   if (window.electronAPI?.getToken) {
     CONFIG.token = await window.electronAPI.getToken();
   }

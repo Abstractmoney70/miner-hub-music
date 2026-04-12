@@ -156,48 +156,54 @@
         {
           "title": "Having a Blast",
           "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/Having.a.Blast.mp3",
+          "youtubeUrl": "https://youtu.be/QQ7brNLuPlQ",
           "duration": "2:43",
-          "access": "early",
+          "access": "public",
           "plays": 87293810,
           "explicit": true
         },
         {
           "title": "Chump",
           "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/Chump.mp3",
-          "duration": "2:54",
-          "access": "early",
+          "youtubeUrl": "https://youtu.be/yqPXIUuo-zo",
+          "duration": "2:52",
+          "access": "public",
           "plays": 92847210,
           "explicit": false
         },
         {
           "title": "Longview",
           "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/Longview.mp3",
-          "duration": "3:59",
-          "access": "early",
+          "youtubeUrl": "https://youtu.be/a_zLSOh3FwM",
+          "duration": "3:54",
+          "access": "public",
           "plays": 584732918,
           "explicit": true
         },
         {
           "title": "Welcome to Paradise",
           "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/Welcome.to.Paradise.mp3",
-          "duration": "3:44",
-          "access": "early",
+          "youtubeUrl": "https://youtu.be/5xUu6t1FOlY",
+          "duration": "3:46",
+          "access": "public",
           "plays": 492847391,
           "explicit": true
         },
         {
           "title": "Pulling Teeth",
           "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/Pulling.Teeth.mp3",
-          "duration": "2:31",
-          "access": "early",
+          "youtubeUrl": "https://youtu.be/WnC5agnLV2g",
+          "duration": "2:38",
+          "access": "public",
           "plays": 112938472,
           "explicit": true
         },
         {
           "title": "Basket Case",
           "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/Basket.Case.mp3",
-          "duration": "3:01",
-          "access": "early",
+          "youtubeUrl": "https://youtu.be/GEjx9pybBeQ",
+          "duration": "3:02",
+          "access": "public",
           "plays": 1029384721,
           "explicit": true
         },

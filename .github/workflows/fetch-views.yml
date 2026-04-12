@@ -29,15 +29,15 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
+
           if git diff --quiet daily_views.json; then
             echo "No changes to daily_views.json — skipping commit."
           else
             git add daily_views.json
             git commit -m "chore: update daily_views.json [$(date -u '+%Y-%m-%d')]"
             
-            # Pull latest changes before pushing
-            git pull --rebase origin main
+            # === THE FIX: Force a pull before push ===
+            git pull --rebase origin main --autostash
             
             git push origin main
           fi

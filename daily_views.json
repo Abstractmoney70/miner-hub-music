@@ -1,25 +1,27 @@
 {
-  "fetchedAt": "2026-04-12T17:56:16.644Z",
+  "fetchedAt": "2026-04-13T08:10:29.601Z",
   "views": {
-    "american-idiot::0": 420,
+    "american-idiot::0": 422,
     "american-idiot::1": 48,
     "american-idiot::2": 34,
-    "american-idiot::3": 66,
-    "american-idiot::4": 50,
+    "american-idiot::3": 69,
+    "american-idiot::4": 53,
     "american-idiot::5": 70,
     "american-idiot::6": 145,
-    "american-idiot::7": 122,
+    "american-idiot::7": 123,
     "american-idiot::8": 5,
     "american-idiot::9": 110,
     "american-idiot::10": 22,
     "american-idiot::11": 57,
     "american-idiot::12": 61,
-    "dookie::0": 120,
-    "dookie::1": 12,
+    "dookie::0": 132,
+    "dookie::1": 15,
     "dookie::2": 11,
     "dookie::3": 20,
-    "dookie::4": 43,
-    "dookie::5": 5,
-    "dookie::6": 24
+    "longview::0": 20,
+    "dookie::4": 54,
+    "dookie::5": 9,
+    "dookie::6": 37,
+    "basket-case::0": 37
   }
 }

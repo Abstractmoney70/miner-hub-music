@@ -318,6 +318,49 @@
           "explicit": true
         }
       ]
+    },
+    {
+      "slug": "welcome-to-paradise",
+      "name": "Welcome to Paradise",
+      "artist": "Minecraft Day",
+      "year": 1994,
+      "type": "Single",
+      "cover": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Single_WelcomeToParadise/Dookie.png",
+      "tag": "Single_WelcomeToParadise",
+      "access": "public",
+      "releaseDate": "1994-10-17",
+      "tracks": [
+        {
+          "title": "Welcome to Paradise",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Single_WelcomeToParadise/Welcome.to.Paradise.mp3",
+          "youtubeUrl": "https://youtu.be/5xUu6t1FOlY",
+          "duration": "3:46",
+          "access": "public",
+          "plays": 0,
+          "explicit": false
+        }
+      ]
+    },
+    {
+      "slug": "when-i-come-around",
+      "name": "When I Come Around",
+      "artist": "Minecraft Day",
+      "year": 1995,
+      "type": "Single",
+      "cover": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Single_WhenIComeAround/Dookie.png",
+      "tag": "Single_WhenIComeAround",
+      "access": "public",
+      "releaseDate": "1995-01-16",
+      "tracks": [
+        {
+          "title": "When I Come Around",
+          "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Single_WhenIComeAround/When.I.Come.Around.mp3",
+          "duration": "2:58",
+          "access": "public",
+          "plays": 0,
+          "explicit": false
+        }
+      ]
     }
   ]
 }

@@ -5,6 +5,11 @@ on:
     - cron: "0 6 * * *"
   workflow_dispatch:
 
+# 🔒 Prevent overlapping runs
+concurrency:
+  group: daily-views-update
+  cancel-in-progress: false
+
 jobs:
   fetch-views:
     runs-on: ubuntu-latest
@@ -14,6 +19,9 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -25,19 +33,12 @@ jobs:
           YT_API_KEY: ${{ secrets.YT_API_KEY }}
         run: node fetch-views.js
 
-      - name: Commit and push daily_views.json
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          if git diff --quiet daily_views.json; then
-            echo "No changes to daily_views.json — skipping commit."
-          else
-            git add daily_views.json
-            git commit -m "chore: update daily_views.json [$(date -u '+%Y-%m-%d')]"
-            
-            # === THE FIX: Force a pull before push ===
-            git pull --rebase origin main --autostash
-            
-            git push origin main
-          fi
+      - name: Commit and push changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update daily_views.json [skip ci]"
+          file_pattern: "daily_views.json"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"
+          # 🛡️ Force push if necessary (only for this file, safe)
+          push_options: "--force"

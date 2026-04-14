@@ -212,6 +212,7 @@
         {
           "title": "She",
           "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/She.mp3",
+          "youtubeUrl": "https://youtu.be/yBBznXl_WKg",
           "duration": "2:14",
           "access": "early",
           "plays": 203948271,
@@ -220,6 +221,7 @@
         {
           "title": "Sassafras Roots",
           "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/Sassafras.Roots.mp3",
+          "youtubeUrl": "https://youtu.be/fHrAvOS7voo",
           "duration": "2:37",
           "access": "early",
           "plays": 98273810,
@@ -228,6 +230,7 @@
         {
           "title": "When I Come Around",
           "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/When.I.Come.Around.mp3",
+          "youtubeUrl": "https://youtu.be/TdVI_7469E4",
           "duration": "2:58",
           "access": "early",
           "plays": 712938472,
@@ -355,6 +358,7 @@
         {
           "title": "When I Come Around",
           "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Single_WhenIComeAround/When.I.Come.Around.mp3",
+          "youtubeUrl": "https://youtu.be/TdVI_7469E4",
           "duration": "2:58",
           "access": "public",
           "plays": 0,

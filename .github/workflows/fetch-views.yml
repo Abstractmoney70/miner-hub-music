@@ -5,7 +5,6 @@ on:
     - cron: "0 6 * * *"
   workflow_dispatch:
 
-# 🔒 Prevent overlapping runs
 concurrency:
   group: daily-views-update
   cancel-in-progress: false
@@ -40,5 +39,3 @@ jobs:
           file_pattern: "daily_views.json"
           commit_user_name: "github-actions[bot]"
           commit_user_email: "github-actions[bot]@users.noreply.github.com"
-          # 🛡️ Force push if necessary (only for this file, safe)
-          push_options: "--force"

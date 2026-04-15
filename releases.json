@@ -11,7 +11,6 @@
       "tag": "Album_AmericanIdiot",
       "access": "public",
       "releaseDate": "2004-09-21",
-      "description": "Don't Wanna Be An American Idiot (Main - Standard)",
       "tracks": [
         {
           "title": "American Idiot",
@@ -140,11 +139,8 @@
       "type": "Album",
       "cover": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/Dookie.png",
       "tag": "Album_Dookie",
-      "access": "early",
+      "access": "public",
       "releaseDate": "1994-02-01",
-      "code": "MINECRAFTDAYDOOKIAN1994",
-      "limit": 0,
-      "description": "I declare I don't care no more!",
       "tracks": [
         {
           "title": "Burnout",
@@ -239,6 +235,7 @@
         {
           "title": "Coming Clean",
           "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/Coming.Clean.mp3",
+          "youtubeUrl": "https://youtu.be/RHAIhPS6M2Y",
           "duration": "1:34",
           "access": "early",
           "plays": 87293841,
@@ -247,6 +244,7 @@
         {
           "title": "Emenius Sleepus",
           "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/Emenius.Sleepus.mp3",
+          "youtubeUrl": "https://youtu.be/_n4kv0Nwyxo",
           "duration": "1:44",
           "access": "early",
           "plays": 63847291,
@@ -255,6 +253,7 @@
         {
           "title": "In the End",
           "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/In.The.End.mp3",
+          "youtubeUrl": "https://youtu.be/KsMCt6j6t3w",
           "duration": "1:46",
           "access": "early",
           "plays": 72938401,
@@ -263,6 +262,7 @@
         {
           "title": "F.O.D.",
           "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/F.O.D.mp3",
+          "youtubeUrl": "https://youtu.be/2RxsVxMnngY",
           "duration": "2:50",
           "access": "early",
           "plays": 98273019,
@@ -271,6 +271,7 @@
         {
           "title": "All by Myself",
           "file": "https://github.com/Abstractmoney70/miner-hub-music/releases/download/Album_Dookie/All.by.Myself.mp3",
+          "youtubeUrl": "https://youtu.be/cxiatAF-X8A",
           "duration": "1:40",
           "access": "early",
           "plays": 52938471,
